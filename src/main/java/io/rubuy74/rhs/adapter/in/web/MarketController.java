@@ -1,5 +1,6 @@
 package io.rubuy74.rhs.adapter.in.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.MarketRequest;
 import io.rubuy74.rhs.domain.OperationType;
@@ -16,7 +17,7 @@ public class MarketController {
     }
 
     @PostMapping
-    public void addMarkets(@RequestBody MarketRequest marketRequest) {
+    public void addMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.ADD
@@ -25,7 +26,7 @@ public class MarketController {
     }
 
     @PutMapping
-    public void editMarkets(@RequestBody MarketRequest marketRequest) {
+    public void editMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.EDIT
@@ -34,7 +35,7 @@ public class MarketController {
     }
 
     @DeleteMapping
-    public void deleteMarkets(@RequestBody MarketRequest marketRequest) {
+    public void deleteMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.DELETE

@@ -1,12 +1,21 @@
 package io.rubuy74.rhs.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 
 public class Event {
+    @JsonProperty
     String id;
+
+    @JsonProperty
     String name;
+
+    @JsonProperty
     String date;
+
+    @JsonProperty
     List<Market> markets;
 
     public Event(String id, String name, String date) {

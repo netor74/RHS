@@ -1,8 +1,15 @@
 package io.rubuy74.rhs.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Selection {
+    @JsonProperty
     String id;
+
+    @JsonProperty
     String name;
+
+    @JsonProperty
     Double odd;
 
     public Selection(String id, String name, Double odd) {
