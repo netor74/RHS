@@ -1,11 +1,16 @@
 package io.rubuy74.rhs.domain;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MarketOperation {
-    String marketId;
-    String marketName;
-    OperationType operation;
-    Event event;
-    List<Selection> selections;
+    @JsonProperty
+    public MarketRequest marketRequest;
+    @JsonProperty
+    public OperationType operationType;
+
+    public MarketOperation(MarketRequest marketRequest, OperationType operationType) {
+        this.marketRequest = marketRequest;
+        this.operationType = operationType;
+    }
+
 }
