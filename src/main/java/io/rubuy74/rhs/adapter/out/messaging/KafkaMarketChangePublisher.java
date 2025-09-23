@@ -10,6 +10,10 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
     // TODO: Publish messages to Kafka
     @Override
     public void publish(MarketOperation marketOperation) {
-
+        System.out.println(
+                "published to kafka topic: \n" +
+                        "Market Request:" + marketOperation.marketRequest.toString() + "\n" +
+                        "Operation Type:" + marketOperation.operationType.toString()
+        );
     }
 }

@@ -1,6 +1,8 @@
 package io.rubuy74.rhs.adapter.in.web;
 
+import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.MarketRequest;
+import io.rubuy74.rhs.domain.OperationType;
 import io.rubuy74.rhs.port.in.MarketChangeUseCase;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,18 +15,30 @@ public class MarketController {
         this.marketChangeUseCase = marketChangeUseCase;
     }
 
-    @PostMapping()
+    @PostMapping
     public void addMarkets(@RequestBody MarketRequest marketRequest) {
-        marketChangeUseCase.handle(marketRequest);
+        MarketOperation marketOperation = new MarketOperation(
+                marketRequest,
+                OperationType.ADD
+                );
+        marketChangeUseCase.handle(marketOperation);
     }
 
-    @PutMapping()
+    @PutMapping
     public void editMarkets(@RequestBody MarketRequest marketRequest) {
-        marketChangeUseCase.handle(marketRequest);
+        MarketOperation marketOperation = new MarketOperation(
+                marketRequest,
+                OperationType.EDIT
+        );
+        marketChangeUseCase.handle(marketOperation);
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public void deleteMarkets(@RequestBody MarketRequest marketRequest) {
-        marketChangeUseCase.handle(marketRequest);
+        MarketOperation marketOperation = new MarketOperation(
+                marketRequest,
+                OperationType.DELETE
+        );
+        marketChangeUseCase.handle(marketOperation);
     }
 }
