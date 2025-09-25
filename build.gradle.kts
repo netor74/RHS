@@ -27,7 +27,6 @@ dependencies {
     // # Kafka Dependencies
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
     implementation("org.apache.kafka:kafka-clients:4.0.0")
-
     implementation("org.springframework.kafka:spring-kafka")
 }
 

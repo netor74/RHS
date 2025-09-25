@@ -1,7 +1,7 @@
 package io.rubuy74.rhs.adapter.out.messaging;
 
-import org.springframework.kafka.support.serializer.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.port.out.MarketChangePublisher;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -16,11 +16,8 @@ import java.util.Properties;
 @Component
 public class KafkaMarketChangePublisher implements MarketChangePublisher {
     private static final Logger logger = LoggerFactory.getLogger(KafkaMarketChangePublisher.class);
-    private final ObjectMapper objectMapper;
-
-    public KafkaMarketChangePublisher(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private static final String topic = "market-changes";
+    private static final ObjectMapper mapper = new ObjectMapper() ;
 
     private Properties getKafkaProperties() {
         Properties properties = new Properties();
@@ -28,19 +25,26 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
         properties.put("acks", "1");
         properties.put("retries", 3);
         properties.put("key.serializer", StringSerializer.class.getName() );
-        properties.put("value.serializer", JsonSerializer.class.getName()  );
+        properties.put("value.serializer", ByteArraySerializer.class.getName()  );
         return properties;
     }
 
-    // TODO: Publish messages to Kafka
     @Override
     public void publish(MarketOperation marketOperation) {
 
-        KafkaProducer<String, MarketOperation> producer = new KafkaProducer<>(getKafkaProperties());
-        ProducerRecord<String, MarketOperation> producerRecord = new ProducerRecord<>(
-                "market-changes",
+        byte[] payload;
+        try {
+            payload = mapper.writeValueAsBytes(marketOperation);
+        } catch (Exception e) {
+            logger.error("Failed to serialize MarketOperation to JSON: {}", e.getMessage(), e);
+            return;
+        }
+
+        KafkaProducer<String, byte[]> producer = new KafkaProducer<>(getKafkaProperties());
+        ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>(
+                topic,
                 marketOperation.operationType.toString(),
-                marketOperation
+                payload
         );
 
         producer.send(producerRecord, (recordMetadata,e ) -> {
