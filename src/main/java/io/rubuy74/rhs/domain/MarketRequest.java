@@ -12,8 +12,8 @@ public class MarketRequest {
     @JsonProperty
     String marketName;
 
-    @JsonProperty
-    Event event;
+    @JsonProperty("event")
+    EventDTO eventDTO;
 
     @JsonProperty
     Timestamp timestamp;
@@ -21,10 +21,10 @@ public class MarketRequest {
     @JsonProperty
     List<Selection> selections;
 
-    public MarketRequest(String marketId, String marketName,Event event, List<Selection> selections) {
+    public MarketRequest(String marketId, String marketName,EventDTO eventDTO, List<Selection> selections) {
         this.marketId = marketId;
         this.marketName = marketName;
-        this.event = event;
+        this.eventDTO = eventDTO;
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.selections = selections;
     }
@@ -33,7 +33,7 @@ public class MarketRequest {
         return "MarketRequest{" +
                 "marketId='" + marketId + '\'' +
                 ", marketName='" + marketName + '\'' +
-                ", event=" + event +
+                ", event=" + eventDTO +
                 ", selections=" + selections +
                 "}";
     }
