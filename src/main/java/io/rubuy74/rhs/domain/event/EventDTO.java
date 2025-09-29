@@ -1,4 +1,4 @@
-package io.rubuy74.rhs.domain;
+package io.rubuy74.rhs.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

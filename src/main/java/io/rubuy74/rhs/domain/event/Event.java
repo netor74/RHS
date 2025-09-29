@@ -1,6 +1,8 @@
-package io.rubuy74.rhs.domain;
+package io.rubuy74.rhs.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rubuy74.rhs.domain.market.Market;
+
 import java.util.List;
 
 public class Event {

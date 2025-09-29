@@ -1,6 +1,6 @@
 package io.rubuy74.rhs.adapter.in.web;
 
-import io.rubuy74.rhs.domain.Event;
+import io.rubuy74.rhs.domain.event.Event;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import io.rubuy74.rhs.domain.http.EventListingResponse;
