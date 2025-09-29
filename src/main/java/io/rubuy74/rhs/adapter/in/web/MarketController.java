@@ -2,8 +2,8 @@ package io.rubuy74.rhs.adapter.in.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.rubuy74.rhs.domain.MarketOperation;
-import io.rubuy74.rhs.domain.MarketRequest;
-import io.rubuy74.rhs.domain.OperationType;
+import io.rubuy74.rhs.domain.http.MarketRequest;
+import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.port.in.MarketChangeUseCase;
 import org.springframework.web.bind.annotation.*;
 

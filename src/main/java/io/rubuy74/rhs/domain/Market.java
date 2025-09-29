@@ -13,4 +13,10 @@ public class Market {
 
     @JsonProperty
     List<Selection> selections;
+
+    public Market(String id, String name, List<Selection> selections) {
+        this.id = id;
+        this.name = name;
+        this.selections = new java.util.ArrayList<>(selections);
+    }
 }

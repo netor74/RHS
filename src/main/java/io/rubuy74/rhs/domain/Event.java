@@ -1,8 +1,6 @@
 package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Date;
 import java.util.List;
 
 public class Event {
@@ -16,13 +14,12 @@ public class Event {
     String date;
 
     @JsonProperty
-    List<Market> markets;
+    private List<Market> markets = new java.util.ArrayList<>();
 
     public Event(String id, String name, String date) {
         this.id = id;
         this.name = name;
         this.date = date;
-        this.markets = List.of();
     }
 
     @Override
