@@ -1,6 +1,8 @@
-package io.rubuy74.rhs.domain;
+package io.rubuy74.rhs.domain.market;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rubuy74.rhs.domain.Selection;
+import io.rubuy74.rhs.domain.event.EventDTO;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 

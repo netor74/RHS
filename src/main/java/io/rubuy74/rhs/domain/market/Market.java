@@ -1,6 +1,7 @@
-package io.rubuy74.rhs.domain;
+package io.rubuy74.rhs.domain.market;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rubuy74.rhs.domain.Selection;
 
 import java.util.List;
 

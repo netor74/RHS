@@ -2,7 +2,7 @@ package io.rubuy74.rhs.adapter.out.messaging;
 
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.rubuy74.rhs.domain.MarketOperation;
+import io.rubuy74.rhs.domain.market.MarketOperation;
 import io.rubuy74.rhs.port.out.MarketChangePublisher;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;

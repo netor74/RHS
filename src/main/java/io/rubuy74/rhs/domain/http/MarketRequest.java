@@ -1,7 +1,7 @@
 package io.rubuy74.rhs.domain.http;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.rubuy74.rhs.domain.EventDTO;
+import io.rubuy74.rhs.domain.event.EventDTO;
 import io.rubuy74.rhs.domain.Selection;
 
 import java.sql.Timestamp;
