@@ -1,26 +1,29 @@
-package io.rubuy74.rhs.domain;
+package io.rubuy74.rhs.domain.http;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rubuy74.rhs.domain.EventDTO;
+import io.rubuy74.rhs.domain.Selection;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 public class MarketRequest {
     @JsonProperty
-    String marketId;
+    public String marketId;
 
     @JsonProperty
-    String marketName;
+    public String marketName;
 
     @JsonProperty("event")
-    EventDTO eventDTO;
+    public EventDTO eventDTO;
 
     @JsonProperty
     Timestamp timestamp;
 
     @JsonProperty
-    List<Selection> selections;
+    public List<Selection> selections;
 
+    public MarketRequest() {}
     public MarketRequest(String marketId, String marketName,EventDTO eventDTO, List<Selection> selections) {
         this.marketId = marketId;
         this.marketName = marketName;

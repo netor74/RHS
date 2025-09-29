@@ -1,7 +1,7 @@
 package io.rubuy74.rhs.adapter.out.messaging;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.port.out.MarketChangePublisher;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -25,7 +25,7 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
         properties.put("acks", "1");
         properties.put("retries", 3);
         properties.put("key.serializer", StringSerializer.class.getName() );
-        properties.put("value.serializer", ByteArraySerializer.class.getName()  );
+        properties.put("value.serializer", ByteArraySerializer.class.getName());
         return properties;
     }
 
