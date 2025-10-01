@@ -1,0 +1,15 @@
+meta {
+  name: Get Events
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:8080/api/v1/events
+  body: json
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
