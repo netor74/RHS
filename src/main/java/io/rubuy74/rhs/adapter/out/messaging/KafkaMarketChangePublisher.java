@@ -1,20 +1,14 @@
 package io.rubuy74.rhs.adapter.out.messaging;
 
-import org.apache.kafka.common.serialization.ByteArraySerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.port.out.MarketChangePublisher;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 @Service
