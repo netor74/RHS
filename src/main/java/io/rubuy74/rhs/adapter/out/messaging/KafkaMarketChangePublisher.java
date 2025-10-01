@@ -9,24 +9,23 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
-@Component
+@Service
 public class KafkaMarketChangePublisher implements MarketChangePublisher {
     private static final Logger logger = LoggerFactory.getLogger(KafkaMarketChangePublisher.class);
-    private static final String topic = "market-changes";
+    private static final String TOPIC = "market-changes";
     private static final ObjectMapper mapper = new ObjectMapper() ;
+    private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
-    private Properties getKafkaProperties() {
-        Properties properties = new Properties();
-        properties.put("bootstrap.servers", "localhost:9092");
-        properties.put("acks", "1");
-        properties.put("retries", 3);
-        properties.put("key.serializer", StringSerializer.class.getName() );
-        properties.put("value.serializer", ByteArraySerializer.class.getName());
-        return properties;
+    public KafkaMarketChangePublisher(KafkaTemplate<String, byte[]> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -40,26 +39,13 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
             return;
         }
 
-        KafkaProducer<String, byte[]> producer = new KafkaProducer<>(getKafkaProperties());
-        ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>(
-                topic,
-                marketOperation.operationType.toString(),
-                payload
-        );
-
-        producer.send(producerRecord, (recordMetadata,e ) -> {
+        CompletableFuture<SendResult<String,byte[]>> future= kafkaTemplate.send(TOPIC, payload);
+        future.whenComplete((result, e) -> {
             if (e != null) {
-                logger.error("Failed to send message: {}", e.getMessage());
-            } else {
-                logger.info(
-                        "Send record to market-changes: {} \n Operation({}): {}",
-                        recordMetadata,
-                        marketOperation.operationType.toString(),
-                        marketOperation.marketRequest.toString()
-                );
+                logger.error("Failed to send MarketOperation message: {}", e.getMessage(), e);
+            } else  {
+                logger.info("Sent MarketOperation to market-changes: {}", payload);
             }
         });
-
-        producer.close();
     }
 }
