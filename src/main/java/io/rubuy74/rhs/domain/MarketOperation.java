@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class MarketOperation {
     @JsonProperty
-    public MarketRequest marketRequest;
+    private MarketRequest marketRequest;
     @JsonProperty
-    public OperationType operationType;
+    private OperationType operationType;
 
     @SuppressWarnings("unchecked")
     public static MarketOperation fromJson(LinkedHashMap<String, Object> rawPayload) {

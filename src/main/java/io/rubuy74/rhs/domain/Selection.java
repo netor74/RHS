@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class Selection {
     @JsonProperty
-    String id;
+    private String id;
 
     @JsonProperty
-    String name;
+    private String name;
 
     @JsonProperty
-    Double odd;
+    private Double odd;
 
     public static Selection fromJson(Map<String,Object> rawPayload) {
         String id = (String) rawPayload.get("id");
