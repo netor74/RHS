@@ -14,6 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,10 +34,10 @@ class MarketControllerTest {
     @MockitoBean
     private MarketChangeUseCase marketChangeUseCase;
 
-    private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", "2025-10-28");
+    private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", LocalDate.parse("2025-10-28"));
     private static final MarketRequest MARKET_REQUEST = new MarketRequest(
-            "1234",
-            "MatchWinner",
+            "12345",
+            "Match Winner",
             eventDTO,
             new ArrayList<>()
     );

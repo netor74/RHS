@@ -3,20 +3,22 @@ package io.rubuy74.rhs.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class Event {
     @JsonProperty
-    private String id;
+    private final String id;
 
     @JsonProperty
-    private String name;
+    private final String name;
 
     @JsonProperty
-    private String date;
+    private final LocalDate date;
 
     @JsonProperty
-    private List<Market> markets = new java.util.ArrayList<>();
+    private final List<Market> markets = new java.util.ArrayList<>();
 
     public String getId() {
         return id;
@@ -24,11 +26,11 @@ public class Event {
     public String getName() {
         return name;
     }
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public Event(String id, String name, String date) {
+    public Event(String id, String name, LocalDate date) {
         this.id = id;
         this.name = name;
         this.date = date;
