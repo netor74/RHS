@@ -4,6 +4,7 @@ import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
@@ -16,9 +17,19 @@ import java.util.List;
 @Service
 public class EventService {
     public static Logger logger = LoggerFactory.getLogger(EventService.class);
+    private final RestClient restClient;
+
+    public EventService(
+            RestClient.Builder restClient,
+            @Value("${mos.service.base-url}")  String baseUrl
+    ) {
+        this.restClient = restClient
+                .baseUrl(baseUrl + "/api/v1")
+                .build();
+    }
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    public List<Event> getEvents(RestClient restClient) {
+    public List<Event> getEvents() {
         ParameterizedTypeReference<List<Event>> responseType =
                 new ParameterizedTypeReference<>() {};
 
