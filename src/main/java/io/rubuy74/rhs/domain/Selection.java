@@ -1,6 +1,7 @@
 package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.util.Map;
 
@@ -29,10 +30,10 @@ public class Selection {
 
     @Override
     public String toString() {
-        return "Selection{" +
-                "id:" + id
-                + ", name:" + name
-                + ", odd:" + odd
-                ;
+        return MoreObjects.toStringHelper(this.getClass())
+                .add("id",id)
+                .add("name",name)
+                .add("odd",odd)
+                .toString();
     }
 }

@@ -1,6 +1,8 @@
 package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
 import java.util.List;
 
 public class Event {
@@ -34,10 +36,11 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{"
-                + "id='" + id + '\''
-                + ", name='" + name + '\''
-                + ", date=" + date
-                + ", markets=" + markets;
+        return MoreObjects.toStringHelper(this.getClass())
+                .add("id",id)
+                .add("name",name)
+                .add("date",date)
+                .add("market",markets)
+                .toString();
     }
 }
