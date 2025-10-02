@@ -37,18 +37,20 @@ class EventServiceTest {
     @Mock 
     private RestClient.ResponseSpec responseSpec;
 
-    @Test
-    void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() {
-        List<Event> expectedEvents = List.of(
+    private static final List<Event> EXPECTED_EVENTS = List.of(
             new Event("1", "Mock Event 1", "2025-12-01"),
             new Event("2", "Mock Event 2", "2025-12-02")
-        );
-        
+    );
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() {
+
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
-        when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(expectedEvents);
+        when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(EXPECTED_EVENTS);
 
         List<Event> actualEvents = eventService.getEvents(restClient);
         assertThat(actualEvents).hasSize(2);
@@ -59,6 +61,7 @@ class EventServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void getEvents_ShouldThrowEventListingException_WhenApiReturns4xxError() {
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -73,6 +76,7 @@ class EventServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void getEvents_ShouldThrowEventListingException_WhenApiReturns5xxError() {
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
