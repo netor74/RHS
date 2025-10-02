@@ -14,6 +14,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,18 +33,17 @@ class MarketControllerTest {
     @MockitoBean
     private MarketChangeUseCase marketChangeUseCase;
 
-    private MarketRequest createMarketRequest() {
-        MarketRequest request = new MarketRequest();
-        request.marketId = "12345";
-        request.marketName = "Match Winner";
-        request.eventDTO = new EventDTO("evt-01", "Team A vs Team B", "2025-10-28");
-        return request;
-    }
+    private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", "2025-10-28");
+    private static final MarketRequest MARKET_REQUEST = new MarketRequest(
+            "1234",
+            "MatchWinner",
+            eventDTO,
+            new ArrayList<>()
+    );
 
     @Test
     void addMarkets_ShouldCallUseCaseWithAddOperation() throws Exception {
-        MarketRequest request = createMarketRequest();
-        String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = objectMapper.writeValueAsString(MARKET_REQUEST);
 
         mockMvc.perform(post("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,8 +61,7 @@ class MarketControllerTest {
 
     @Test
     void editMarkets_ShouldCallUseCaseWithEditOperation() throws Exception {
-        MarketRequest request = createMarketRequest();
-        String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = objectMapper.writeValueAsString(MARKET_REQUEST);
 
         mockMvc.perform(put("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,8 +79,7 @@ class MarketControllerTest {
 
     @Test
     void deleteMarkets_ShouldCallUseCaseWithDeleteOperation() throws Exception {
-        MarketRequest request = createMarketRequest();
-        String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = objectMapper.writeValueAsString(MARKET_REQUEST);
 
         mockMvc.perform(delete("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
