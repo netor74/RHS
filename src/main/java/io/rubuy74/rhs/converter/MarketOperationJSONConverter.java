@@ -20,12 +20,14 @@ public class MarketOperationJSONConverter {
         MarketRequest marketRequest = new MarketRequest();
 
         if(!rawPayload.containsKey("marketRequest")) {
-            logger.error("marketRequest doesn't exist in payload");
+            logger.error("operation= deserialize_market_operation, " +
+                    "msg=MarketRequest doesn't exist in payload");
             return null;
         }
         Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
         if(!rawPayload.containsKey("event")) {
-            logger.error("event doesn't exist in payload");
+            logger.error("operation= deserialize_market_operation, " +
+                    "msg=Event doesn't exist in payload");
             return null;
         }
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
@@ -41,7 +43,8 @@ public class MarketOperationJSONConverter {
             // add selections to marketRequest
             marketRequest.selections = selectionsMap.stream().map(Selection::fromJson).toList();
         } else if(!marketRequestMap.containsKey("selection")){
-            logger.error("selection doesn't exist in payload");
+            logger.error("operation= deserialize_market_operation, " +
+                    "msg=Selection doesn't exist in payload");
             return null;
         }
 
