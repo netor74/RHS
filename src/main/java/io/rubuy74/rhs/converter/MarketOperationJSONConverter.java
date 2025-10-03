@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MarketOperationJSONConverter {
-    public static Logger logger = LoggerFactory.getLogger(MarketOperationJSONConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarketOperationJSONConverter.class);
 
     @SuppressWarnings("unchecked")
     public static MarketOperation fromJson(LinkedHashMap<String, Object> rawPayload) {
@@ -32,22 +32,21 @@ public class MarketOperationJSONConverter {
         }
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
 
-        // add event to marketRequest
-        marketRequest.eventDTO = EventDTOJSONConverter.fromJson(eventMap);
-        marketRequest.marketId = (String)marketRequestMap.get("marketId");
-        marketRequest.marketName = (String)marketRequestMap.get("marketName");
-
-        if(marketRequestMap.containsKey("selections")){
-            List<Map<String, Object>> selectionsMap = (List<Map<String, Object>>) marketRequestMap.get("selections");
-
-            // add selections to marketRequest
-            marketRequest.selections = selectionsMap.stream().map(Selection::fromJson).toList();
-        } else if(!marketRequestMap.containsKey("selection")){
+        if(!rawPayload.containsKey("selection")) {
             logger.error("operation= deserialize_market_operation, " +
                     "msg=Selection doesn't exist in payload");
             return null;
         }
 
+        // add event to marketRequest
+        marketRequest.eventDTO = EventDTOJSONConverter.fromJson(eventMap);
+        marketRequest.marketId = (String)marketRequestMap.get("marketId");
+        marketRequest.marketName = (String)marketRequestMap.get("marketName");
+
+        List<Map<String, Object>> selectionsMap = (List<Map<String, Object>>) marketRequestMap.get("selections");
+
+        // add selections to marketRequest
+        marketRequest.selections = selectionsMap.stream().map(Selection::fromJson).toList();
         marketOperation.setMarketRequest(marketRequest);
         marketOperation.setOperationType(OperationType.valueOf((String) marketRequestMap.get("operationType")));
         return marketOperation;
