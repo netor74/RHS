@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,9 +36,14 @@ class MarketControllerTest {
     private MarketChangeUseCase marketChangeUseCase;
 
     private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", LocalDate.parse("2025-10-28"));
+    private static final String MOCK_MARKET_REQUEST_ID = "12345";
+    private static final String MOCK_MARKET_REQUEST_NAME = "Match Winner";
+    private static final String MOCK_EVENT_ID = "evt-01";
+    private static final String MOCK_EVENT_NAME = "Team A vs Team B";
+    private static final String MOCK_EVENT_DATE = "2025-10-28";
     private static final MarketRequest MARKET_REQUEST = new MarketRequest(
-            "12345",
-            "Match Winner",
+            MOCK_MARKET_REQUEST_ID,
+            MOCK_MARKET_REQUEST_NAME,
             eventDTO,
             new ArrayList<>()
     );
@@ -54,10 +60,12 @@ class MarketControllerTest {
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
-        assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.ADD);
-        assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo("12345");
-        assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo("Match Winner");
-        assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo("evt-01");
+        assertAll(
+                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.ADD),
+                () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
+                () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID)
+        );
     }
 
     @Test
@@ -72,10 +80,13 @@ class MarketControllerTest {
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
-        assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.EDIT);
-        assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo("12345");
-        assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo("Match Winner");
-        assertThat(capturedOperation.getMarketRequest().eventDTO.getName()).isEqualTo("Team A vs Team B");
+        assertAll(
+                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.EDIT),
+                () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
+                () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getName()).isEqualTo(MOCK_EVENT_NAME)
+        );
+
     }
 
     @Test
@@ -90,9 +101,11 @@ class MarketControllerTest {
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
-        assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE);
-        assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo("12345");
-        assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo("evt-01");
-        assertThat(capturedOperation.getMarketRequest().eventDTO.getDate()).isEqualTo("2025-10-28");
+        assertAll(
+                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE),
+                () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID),
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getDate()).isEqualTo(MOCK_EVENT_DATE)
+        );
     }
 }
