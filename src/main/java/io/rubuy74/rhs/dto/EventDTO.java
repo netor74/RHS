@@ -1,5 +1,6 @@
 package io.rubuy74.rhs.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.rubuy74.rhs.domain.Event;
@@ -15,6 +16,7 @@ public class EventDTO {
     private String name;
 
     @JsonProperty
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate date;
 
     public EventDTO() {}
