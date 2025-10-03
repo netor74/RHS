@@ -3,6 +3,7 @@ package io.rubuy74.rhs.adapter.in.web;
 import io.rubuy74.rhs.config.property.RetryConfig;
 import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -40,9 +42,13 @@ class EventServiceTest {
     @Mock
     private RetryConfig retryConfig;
 
+    private static final String FIRST_MOCK_EVENT_ID = "1";
+    private static final String SECOND_MOCK_EVENT_ID = "2";
+    private static final String FIRST_MOCK_EVENT_NAME = "Event 1";
+    private static final String SECOND_MOCK_EVENT_NAME = "Event 2";
     private static final List<Event> EXPECTED_EVENTS = List.of(
-            new Event("1", "Mock Event 1", LocalDate.parse("2025-12-01")),
-            new Event("2", "Mock Event 2", LocalDate.parse("2025-12-02"))
+            new Event(FIRST_MOCK_EVENT_ID, FIRST_MOCK_EVENT_NAME, LocalDate.parse("2025-12-01")),
+            new Event(SECOND_MOCK_EVENT_ID, SECOND_MOCK_EVENT_NAME, LocalDate.parse("2025-12-02"))
     );
 
     private EventService createEventService() {
@@ -63,11 +69,29 @@ class EventServiceTest {
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(EXPECTED_EVENTS);
 
         List<Event> actualEvents = eventService.getEvents();
-        assertThat(actualEvents).hasSize(2);
-        assertThat(actualEvents.get(0).getId()).isEqualTo("1");
-        assertThat(actualEvents.get(0).getName()).isEqualTo("Mock Event 1");
-        assertThat(actualEvents.get(1).getId()).isEqualTo("2");
-        assertThat(actualEvents.get(1).getName()).isEqualTo("Mock Event 2");
+        assertAll(
+                () -> assertThat(actualEvents).hasSize(2),
+                () -> {
+                    Assertions.assertNotNull(actualEvents);
+                    assertThat(actualEvents.getFirst().getId()).isEqualTo(FIRST_MOCK_EVENT_ID);
+                },
+                () -> {
+                    Assertions.assertNotNull(actualEvents);
+                    assertThat(actualEvents.getFirst().getName()).isEqualTo(FIRST_MOCK_EVENT_NAME);
+                },
+                () -> {
+                    Assertions.assertNotNull(actualEvents);
+                    assertThat(actualEvents.getFirst().getId()).isEqualTo(SECOND_MOCK_EVENT_ID);
+                },
+                () -> {
+                    Assertions.assertNotNull(actualEvents);
+                    assertThat(actualEvents.getFirst().getName()).isEqualTo(SECOND_MOCK_EVENT_NAME);
+                }
+        );
+
+
+
+
     }
 
     @Test
@@ -82,7 +106,7 @@ class EventServiceTest {
         when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
             throw new EventListingException("Failed to retrieve events. Status400 BAD_REQUEST");
         });
-        assertThatThrownBy(() -> eventService.getEvents())
+        assertThatThrownBy(eventService::getEvents)
                 .isInstanceOf(EventListingException.class)
                 .hasMessageContaining("Failed to retrieve events");
     }
@@ -99,7 +123,7 @@ class EventServiceTest {
         when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
             throw new EventListingException("MOS service error. Status: 500 INTERNAL_SERVER_ERROR");
         });
-        assertThatThrownBy(() -> eventService.getEvents())
+        assertThatThrownBy(eventService::getEvents)
                 .isInstanceOf(EventListingException.class)
                 .hasMessageContaining("MOS service error");
     }
