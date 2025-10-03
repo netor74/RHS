@@ -15,10 +15,11 @@ import java.util.concurrent.CompletableFuture;
 public class KafkaMarketChangePublisher implements MarketChangePublisher {
     private static final Logger logger = LoggerFactory.getLogger(KafkaMarketChangePublisher.class);
     private static final String TOPIC = "market-changes";
-    private static final ObjectMapper mapper = new ObjectMapper() ;
+    private final ObjectMapper mapper ;
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
-    public KafkaMarketChangePublisher(KafkaTemplate<String, byte[]> kafkaTemplate) {
+    public KafkaMarketChangePublisher(ObjectMapper objectMapper,KafkaTemplate<String, byte[]> kafkaTemplate) {
+        this.mapper = objectMapper;
         this.kafkaTemplate = kafkaTemplate;
     }
 
