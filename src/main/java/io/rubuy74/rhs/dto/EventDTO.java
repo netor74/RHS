@@ -6,7 +6,6 @@ import com.google.common.base.MoreObjects;
 import io.rubuy74.rhs.domain.Event;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class EventDTO {
     @JsonProperty
