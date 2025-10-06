@@ -4,6 +4,7 @@ import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.Selection;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
+import io.rubuy74.rhs.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,24 +20,17 @@ public class MarketOperationJSONConverter {
         MarketOperation marketOperation = new MarketOperation();
         MarketRequest marketRequest = new MarketRequest();
 
-        if(!rawPayload.containsKey("marketRequest")) {
-            logger.error("operation= deserialize_market_operation, " +
-                    "msg=MarketRequest doesn't exist in payload");
+        List<String> attributeList = List.of("marketRequest", "event", "selection");
+        List<String> errorMessages = ValidatorUtils.checkAttributeList(rawPayload,attributeList);
+        if(!errorMessages.isEmpty()) {
+            errorMessages.forEach((errorMessage) -> {
+                logger.error("operation=deserialize_market_operation, msg={}", errorMessage);
+            });
             return null;
         }
-        Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
-        if(!rawPayload.containsKey("event")) {
-            logger.error("operation= deserialize_market_operation, " +
-                    "msg=Event doesn't exist in payload");
-            return null;
-        }
-        Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
 
-        if(!rawPayload.containsKey("selection")) {
-            logger.error("operation= deserialize_market_operation, " +
-                    "msg=Selection doesn't exist in payload");
-            return null;
-        }
+        Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
+        Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
 
         // add event to marketRequest
         marketRequest.eventDTO = EventDTOJSONConverter.fromJson(eventMap);
