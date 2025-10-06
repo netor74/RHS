@@ -32,6 +32,15 @@ public class Event {
     }
 
     public Event(String id, String name, LocalDate date) {
+        if(id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+        if(name == null) {
+            throw new IllegalArgumentException("name is null");
+        }
+        if(date == null) {
+            throw new IllegalArgumentException("date is null");
+        }
         this.id = id;
         this.name = name;
         this.date = date;
