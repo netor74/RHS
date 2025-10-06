@@ -3,41 +3,42 @@ package io.rubuy74.rhs.adapter.in.web;
 import io.rubuy74.rhs.config.property.RetryConfig;
 import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
     @Mock
-    private RestClient.Builder restClientBuilder;
+    private WebClient.Builder webClientBuilder;
     
     @Mock
-    private RestClient restClient;
+    private WebClient webClient;
+
+    @Mock
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
     
     @Mock
-    private RestClient.RequestHeadersUriSpec requestHeadersUriSpec;
+    private WebClient.RequestHeadersSpec requestHeadersSpec;
     
     @Mock
-    private RestClient.RequestHeadersSpec requestHeadersSpec;
-    
-    @Mock 
-    private RestClient.ResponseSpec responseSpec;
+    private WebClient.ResponseSpec responseSpec;
 
     @Mock
     private RetryConfig retryConfig;
@@ -52,9 +53,13 @@ class EventServiceTest {
     );
 
     private EventService createEventService() {
-        when(restClientBuilder.baseUrl(anyString())).thenReturn(restClientBuilder);
-        when(restClientBuilder.build()).thenReturn(restClient);
-        return new EventService(restClientBuilder, "http://localhost:3000",retryConfig);
+        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+        // the service configures a client connector; ensure the builder chaining continues
+        when(webClientBuilder.clientConnector(any())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClient);
+        when(retryConfig.getMaxRetries()).thenReturn(0); // simplify tests: no retries
+        when(retryConfig.getBackoffTimeMs()).thenReturn(1);
+        return new EventService(webClientBuilder, "http://localhost:3000", retryConfig);
     }
 
     @Test
@@ -62,69 +67,64 @@ class EventServiceTest {
     void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() throws InterruptedException {
         EventService eventService = createEventService();
 
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
-        when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(EXPECTED_EVENTS);
+        when(responseSpec.bodyToMono(any(ParameterizedTypeReference.class)))
+                .thenReturn(Mono.just(EXPECTED_EVENTS));
 
-        List<Event> actualEvents = eventService.getEvents();
-        assertAll(
-                () -> assertThat(actualEvents).hasSize(2),
-                () -> {
-                    Assertions.assertNotNull(actualEvents);
-                    assertThat(actualEvents.getFirst().getId()).isEqualTo(FIRST_MOCK_EVENT_ID);
-                },
-                () -> {
-                    Assertions.assertNotNull(actualEvents);
-                    assertThat(actualEvents.getFirst().getName()).isEqualTo(FIRST_MOCK_EVENT_NAME);
-                },
-                () -> {
-                    Assertions.assertNotNull(actualEvents);
-                    assertThat(actualEvents.getFirst().getId()).isEqualTo(SECOND_MOCK_EVENT_ID);
-                },
-                () -> {
-                    Assertions.assertNotNull(actualEvents);
-                    assertThat(actualEvents.getFirst().getName()).isEqualTo(SECOND_MOCK_EVENT_NAME);
-                }
-        );
-
-
-
-
+        StepVerifier.create(eventService.getEvents())
+                .assertNext(actualEvents -> assertAll(
+                        () -> assertThat(actualEvents).hasSize(2),
+                        () -> assertThat(actualEvents.get(0).getId()).isEqualTo(FIRST_MOCK_EVENT_ID),
+                        () -> assertThat(actualEvents.get(0).getName()).isEqualTo(FIRST_MOCK_EVENT_NAME),
+                        () -> assertThat(actualEvents.get(1).getId()).isEqualTo(SECOND_MOCK_EVENT_ID),
+                        () -> assertThat(actualEvents.get(1).getName()).isEqualTo(SECOND_MOCK_EVENT_NAME)
+                ))
+                .verifyComplete();
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void getEvents_ShouldThrowEventListingException_WhenApiReturns4xxError() {
+    void getEvents_ShouldErrorWithEventListingException_WhenApiReturns4xxError() throws InterruptedException {
         EventService eventService = createEventService();
         
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
+
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        
-        when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
-            throw new EventListingException("Failed to retrieve events. Status400 BAD_REQUEST");
-        });
-        assertThatThrownBy(eventService::getEvents)
-                .isInstanceOf(EventListingException.class)
-                .hasMessageContaining("Failed to retrieve events");
+
+        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(any(ParameterizedTypeReference.class)))
+                .thenReturn(Mono.error(new EventListingException("Failed to retrieve events. Status400 BAD_REQUEST")));
+
+        StepVerifier.create(eventService.getEvents())
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(EventListingException.class);
+                    assertThat(throwable.getMessage()).contains("Failed to retrieve events");
+                })
+                .verify();
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void getEvents_ShouldThrowEventListingException_WhenApiReturns5xxError() {
+    void getEvents_ShouldErrorWithEventListingException_WhenApiReturns5xxError() throws InterruptedException {
         EventService eventService = createEventService();
         
-        when(restClient.get()).thenReturn(requestHeadersUriSpec);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        
-        when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
-            throw new EventListingException("MOS service error. Status: 500 INTERNAL_SERVER_ERROR");
-        });
-        assertThatThrownBy(eventService::getEvents)
-                .isInstanceOf(EventListingException.class)
-                .hasMessageContaining("MOS service error");
+
+        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(any(ParameterizedTypeReference.class)))
+                .thenReturn(Mono.error(new EventListingException("MOS service error. Status: 500 INTERNAL_SERVER_ERROR")));
+
+        StepVerifier.create(eventService.getEvents())
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(EventListingException.class);
+                    assertThat(throwable.getMessage()).contains("MOS service error");
+                })
+                .verify();
     }
 }

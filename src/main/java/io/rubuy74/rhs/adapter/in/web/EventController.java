@@ -7,6 +7,7 @@ import io.rubuy74.rhs.domain.http.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -20,30 +21,35 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<EventListingResponse> getEvents() {
-        try {
-            List<Event> events = eventService.getEvents();
-            return ResponseEntity.ok(new EventListingResponse(Status.SUCCESS,"",events));
-
-        } catch (EventListingException  e) {
-            EventListingResponse eventListingResponse = new EventListingResponse(
-                    Status.ERROR,
-                    e.getMessage() != null ? e.getMessage() : "Unknown error.",
-                    List.of()
-            );
-
-            return ResponseEntity
-                    .status(HttpStatus.SERVICE_UNAVAILABLE) // Use 503 for external dependency failure
-                    .body(eventListingResponse);
-        } catch (Exception e) {
-            EventListingResponse eventListingResponse = new EventListingResponse(
-                    Status.ERROR,
-                    e.getMessage() != null ? e.getMessage() : "Unknown error.",
-                    List.of()
-            );
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR) // Use 500 for internal failure
-                    .body(eventListingResponse);
-        }
+    public Mono<ResponseEntity<EventListingResponse>> getEvents() throws InterruptedException {
+        return eventService.getEvents()
+                .map(events -> ResponseEntity.ok(new EventListingResponse(Status.SUCCESS,"",events)))
+                // Handle specific domain exception first
+                .onErrorResume(EventListingException.class, e ->
+                        Mono.just(ResponseEntity
+                                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                                .body(
+                                        new EventListingResponse(
+                                                Status.ERROR,
+                                                e.getMessage(),
+                                                List.of()
+                                        )
+                                )
+                        )
+                )
+                // Fallback for any other runtime exceptions
+                .onErrorResume(RuntimeException.class, e ->
+                        Mono.just(ResponseEntity
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(
+                                        new EventListingResponse(
+                                                Status.ERROR,
+                                                "Unknown Internal Server Error",
+                                                List.of()
+                                        )
+                                )
+                        )
+                )
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }
