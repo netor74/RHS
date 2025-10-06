@@ -31,6 +31,12 @@ public class MarketOperation {
 
     public MarketOperation() {}
     public MarketOperation(MarketRequest marketRequest, OperationType operationType) {
+        if(marketRequest == null) {
+            throw new IllegalArgumentException("marketRequest is null");
+        }
+        if(operationType == null) {
+            throw new IllegalArgumentException("operationType is null");
+        }
         this.marketRequest = marketRequest;
         this.operationType = operationType;
     }
