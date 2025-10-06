@@ -1,7 +1,6 @@
 package io.rubuy74.rhs.converter;
 
 import io.rubuy74.rhs.domain.MarketOperation;
-import io.rubuy74.rhs.domain.Selection;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.utils.ValidatorUtils;
@@ -40,7 +39,7 @@ public class MarketOperationJSONConverter {
         List<Map<String, Object>> selectionsMap = (List<Map<String, Object>>) marketRequestMap.get("selections");
 
         // add selections to marketRequest
-        marketRequest.selections = selectionsMap.stream().map(Selection::fromJson).toList();
+        marketRequest.selections = selectionsMap.stream().map(SelectionJSONConverter::fromJson).toList();
         marketOperation.setMarketRequest(marketRequest);
         marketOperation.setOperationType(OperationType.valueOf((String) marketRequestMap.get("operationType")));
         return marketOperation;
