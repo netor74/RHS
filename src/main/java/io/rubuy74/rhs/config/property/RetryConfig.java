@@ -14,7 +14,7 @@ public class RetryConfig {
     private int backoffTimeMs;
     private int timeoutMs;
 
-    private static final Logger logger = LoggerFactory.getLogger(RetryConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RetryConfig.class);
 
     @ManagedAttribute
     public int getMaxRetries() {
@@ -23,7 +23,7 @@ public class RetryConfig {
 
     @ManagedAttribute
     public void setMaxRetries(int maxRetries) {
-        logger.debug("operation=set_max_retries, msg=Set max retries to {}", maxRetries);
+        LOGGER.debug("operation=set_max_retries, msg=Set max retries to {}", maxRetries);
         this.maxRetries = maxRetries;
     }
 
@@ -34,7 +34,7 @@ public class RetryConfig {
 
     @ManagedAttribute
     public void setBackoff(int backoff) {
-        logger.debug("operation=set_backoff, msg=Set Backoff limit to {}", backoff);
+        LOGGER.debug("operation=set_backoff, msg=Set Backoff limit to {}", backoff);
         this.backoffTimeMs = backoff;
     }
     @ManagedAttribute
@@ -44,7 +44,7 @@ public class RetryConfig {
 
     @ManagedAttribute
     public void setTimeout(int timeout) {
-        logger.debug("operation=set_timeout, msg=Set timeout to {}", timeout);
+        LOGGER.debug("operation=set_timeout, msg=Set timeout to {}", timeout);
         this.timeoutMs = timeout;
     }
 
