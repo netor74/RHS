@@ -4,29 +4,28 @@ import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.utils.ValidatorUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MarketOperationJSONConverter {
-    private static final Logger logger = LoggerFactory.getLogger(MarketOperationJSONConverter.class);
+    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "event", "selection");
 
     @SuppressWarnings("unchecked")
     public static MarketOperation fromJson(LinkedHashMap<String, Object> rawPayload) {
         MarketOperation marketOperation = new MarketOperation();
         MarketRequest marketRequest = new MarketRequest();
 
-        List<String> attributeList = List.of("marketRequest", "event", "selection");
-        List<String> errorMessages = ValidatorUtils.checkAttributeList(rawPayload,attributeList);
-        if(!errorMessages.isEmpty()) {
-            errorMessages.forEach((errorMessage) -> {
-                logger.error("operation=deserialize_market_operation, msg={}", errorMessage);
-            });
-            return null;
-        }
+        ValidatorUtils.checkArgument(
+                rawPayload != null,
+                "MarketOperation payload is null",
+                "deserialize_market_operation");
+        ValidatorUtils.checkAttributeList(
+                rawPayload,
+                ATTRIBUTE_LIST,
+                "deserialize_market_operation"
+        );
 
         Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
