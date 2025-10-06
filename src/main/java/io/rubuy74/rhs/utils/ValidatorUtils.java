@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ValidatorUtils {
-    private static final Logger logger = LoggerFactory.getLogger(ValidatorUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidatorUtils.class);
     public static void checkAttributeList(
             Map<String,Object> rawPayload,
             List<String> attributeList,
@@ -23,7 +23,7 @@ public class ValidatorUtils {
 
         if(!errorMessages.isEmpty()) {
             errorMessages.forEach((errorMessage) -> {
-                logger.error("operation={}, msg={}",operation, errorMessage);
+                LOGGER.error("operation={}, msg={}",operation, errorMessage);
             });
             throw new IllegalArgumentException(errorMessages.toString());
         }
@@ -31,7 +31,7 @@ public class ValidatorUtils {
 
     public static void checkArgument(boolean expression, String errorMessage, String operation) {
         if (!expression) {
-            logger.error("operation=, {}" +
+            LOGGER.error("operation=, {}" +
                     "msg={}",operation, errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
