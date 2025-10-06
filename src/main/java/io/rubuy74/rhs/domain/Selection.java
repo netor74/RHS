@@ -3,8 +3,6 @@ package io.rubuy74.rhs.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
-import java.util.Map;
-
 public class Selection {
     @JsonProperty
     private String id;
@@ -14,13 +12,6 @@ public class Selection {
 
     @JsonProperty
     private Double odd;
-
-    public static Selection fromJson(Map<String,Object> rawPayload) {
-        String id = (String) rawPayload.get("id");
-        String name = (String) rawPayload.get("name");
-        Double odd = (Double) rawPayload.get("odd");
-        return new Selection(id, name, odd);
-    }
 
     public Selection(String id, String name, Double odd) {
         this.id = id;
