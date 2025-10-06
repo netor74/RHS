@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class RetryConfig {
 
     private int maxRetries;
-    private int backoff;
+    private int backoffTimeMs;
 
     private static final Logger logger = LoggerFactory.getLogger(RetryConfig.class);
 
@@ -27,14 +27,14 @@ public class RetryConfig {
     }
 
     @ManagedAttribute
-    public int getBackoff() {
-        return backoff;
+    public int getBackoffTimeMs() {
+        return backoffTimeMs;
     }
 
     @ManagedAttribute
     public void setBackoff(int backoff) {
         logger.debug("operation=set_backoff, msg=Set Backoff limit to {}", backoff);
-        this.backoff = backoff;
+        this.backoffTimeMs = backoff;
     }
 
 }
