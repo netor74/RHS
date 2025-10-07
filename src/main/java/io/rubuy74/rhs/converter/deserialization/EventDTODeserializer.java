@@ -1,4 +1,4 @@
-package io.rubuy74.rhs.converter;
+package io.rubuy74.rhs.converter.deserialization;
 
 import io.rubuy74.rhs.dto.EventDTO;
 import io.rubuy74.rhs.utils.ValidatorUtils;
