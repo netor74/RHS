@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EventDTODeserializer {
-    private static final List<String> ATTRIBUTE_LIST = List.of("event", "name", "date");
+    private static final List<String> ATTRIBUTE_LIST = List.of("name", "date");
 
     public static EventDTO deserialize(Map<String,Object> rawPayload) {
         ValidatorUtils.checkArgument(
