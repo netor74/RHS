@@ -2,6 +2,7 @@ package io.rubuy74.rhs.config.property;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
@@ -12,9 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ManagedResource
 public class RetryConfig {
 
-    private final AtomicInteger maxRetries = new  AtomicInteger(3);
-    private final AtomicInteger backoffTimeMs = new AtomicInteger(1000);
-    private final AtomicInteger timeoutMs = new AtomicInteger(300);
+    @Value("${rhs.retry.maxRetries}")
+    int defaultMaxRetry;
+    @Value("${rhs.retry.backOffTimeMs}")
+    int defaultBackOffTimeMs;
+    @Value("${rhs.retry.timeoutMS}")
+    int defaultTimeoutMS;
+
+    private final AtomicInteger maxRetries = new  AtomicInteger(defaultMaxRetry);
+    private final AtomicInteger backoffTimeMs = new AtomicInteger(defaultBackOffTimeMs);
+    private final AtomicInteger timeoutMs = new AtomicInteger(defaultTimeoutMS);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RetryConfig.class);
 
