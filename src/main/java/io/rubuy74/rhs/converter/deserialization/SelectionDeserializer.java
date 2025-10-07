@@ -6,10 +6,10 @@ import io.rubuy74.rhs.utils.ValidatorUtils;
 import java.util.List;
 import java.util.Map;
 
-public class SelectionJSONConverter {
+public class SelectionDeserializer {
     private static final List<String> ATTRIBUTE_LIST = List.of("id","name","odd");
 
-    public static Selection fromJson(Map<String,Object> rawPayload) {
+    public static Selection deserialize(Map<String,Object> rawPayload) {
         ValidatorUtils.checkArgument(
                 rawPayload != null,
                 "Selection payload is null",

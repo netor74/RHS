@@ -3,6 +3,7 @@ package io.rubuy74.rhs.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import io.rubuy74.rhs.utils.ValidatorUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,15 +33,9 @@ public class Event {
     }
 
     public Event(String id, String name, LocalDate date) {
-        if(id == null) {
-            throw new IllegalArgumentException("id is null");
-        }
-        if(name == null) {
-            throw new IllegalArgumentException("name is null");
-        }
-        if(date == null) {
-            throw new IllegalArgumentException("date is null");
-        }
+        ValidatorUtils.checkArgument(id == null,"Event id is null","create_event");
+        ValidatorUtils.checkArgument(name == null,"Event name is null","create_event");
+        ValidatorUtils.checkArgument(date == null,"Event date is null","create_event");
         this.id = id;
         this.name = name;
         this.date = date;

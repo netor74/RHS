@@ -1,6 +1,7 @@
 package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rubuy74.rhs.utils.ValidatorUtils;
 
 import java.util.List;
 
@@ -15,15 +16,9 @@ public class Market {
     private List<Selection> selections;
 
     public Market(String id, String name, List<Selection> selections) {
-        if (id == null) {
-            throw new IllegalArgumentException("id is null");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("name is null");
-        }
-        if (selections == null) {
-            throw new IllegalArgumentException("selections is null");
-        }
+        ValidatorUtils.checkArgument(id == null,        "Market id is null","create_event");
+        ValidatorUtils.checkArgument(name == null,      "Market name is null","create_event");
+        ValidatorUtils.checkArgument(selections == null,"Market date is null","create_event");
         this.id = id;
         this.name = name;
         this.selections = new java.util.ArrayList<>(selections);
