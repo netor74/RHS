@@ -61,7 +61,7 @@ public class EventService {
                         })
                 .onStatus(HttpStatusCode::is5xxServerError,
                         (response) -> {
-                            LOGGER.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.statusCode());
+                            LOGGER.error("operation=getEvents, msg=Internal Server Problem, status= {}", response.statusCode());
                             throw new EventListingException(
                                     "MOS service error. Status: " + response.statusCode());
                         })

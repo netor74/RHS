@@ -30,7 +30,7 @@ public class ValidatorUtils {
     }
 
     public static void checkArgument(boolean expression, String errorMessage, String operation) {
-        if (!expression) {
+        if (expression) {
             LOGGER.error("operation=, {}" +
                     "msg={}",operation, errorMessage);
             throw new IllegalArgumentException(errorMessage);
