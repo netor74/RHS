@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ManagedResource
 public class RetryConfig {
 
-    private AtomicInteger maxRetries;
-    private AtomicInteger backoffTimeMs;
-    private AtomicInteger timeoutMs;
+    private final AtomicInteger maxRetries = new  AtomicInteger(3);
+    private final AtomicInteger backoffTimeMs = new AtomicInteger(1000);
+    private final AtomicInteger timeoutMs = new AtomicInteger(300);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RetryConfig.class);
 
