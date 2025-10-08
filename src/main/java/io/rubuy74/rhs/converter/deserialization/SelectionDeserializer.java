@@ -11,7 +11,7 @@ public class SelectionDeserializer {
 
     public static Selection deserialize(Map<String,Object> rawPayload) {
         ValidatorUtils.checkArgument(
-                rawPayload != null,
+                rawPayload == null,
                 "Selection payload is null",
                 "deserialize_selection");
         ValidatorUtils.checkAttributeList(

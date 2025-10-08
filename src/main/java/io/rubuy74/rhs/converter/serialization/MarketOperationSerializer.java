@@ -19,6 +19,9 @@ public class MarketOperationSerializer {
     }
 
     public byte[] serialize(MarketOperation marketOperation) throws InvalidObjectException {
+        if(marketOperation == null) {
+            throw new InvalidObjectException("Market operation is null");
+        }
         byte[] payload;
         try {
             payload = mapper.writeValueAsBytes(marketOperation);
