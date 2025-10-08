@@ -29,7 +29,14 @@ class SelectionTest {
         return Stream.of(
             Arguments.of(null, SELECTION_NAME, SELECTION_ODD),
             Arguments.of(SELECTION_ID, null, SELECTION_ODD),
-            Arguments.of(SELECTION_ID, SELECTION_NAME, null)
+            Arguments.of(SELECTION_ID, SELECTION_NAME, null),
+            Arguments.of(null, SELECTION_NAME, SELECTION_ODD),
+            Arguments.of(SELECTION_ID, null, SELECTION_ODD),
+            Arguments.of(SELECTION_ID, SELECTION_NAME, null),
+            Arguments.of("", SELECTION_NAME, SELECTION_ODD),
+            Arguments.of(" ", SELECTION_NAME, SELECTION_ODD),
+            Arguments.of(SELECTION_ID,"", SELECTION_ODD),
+            Arguments.of(SELECTION_ID," ", SELECTION_ODD) // if you add isBlank() check
         );
     }
 
