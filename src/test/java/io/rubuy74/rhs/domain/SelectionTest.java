@@ -27,23 +27,21 @@ class SelectionTest {
 
     static Stream<Arguments> invalidConstructorArgs() {
         return Stream.of(
-            Arguments.of(null, SELECTION_NAME, SELECTION_ODD),
-            Arguments.of(SELECTION_ID, null, SELECTION_ODD),
-            Arguments.of(SELECTION_ID, SELECTION_NAME, null),
-            Arguments.of(null, SELECTION_NAME, SELECTION_ODD),
-            Arguments.of(SELECTION_ID, null, SELECTION_ODD),
-            Arguments.of(SELECTION_ID, SELECTION_NAME, null),
-            Arguments.of("", SELECTION_NAME, SELECTION_ODD),
-            Arguments.of(" ", SELECTION_NAME, SELECTION_ODD),
-            Arguments.of(SELECTION_ID,"", SELECTION_ODD),
-            Arguments.of(SELECTION_ID," ", SELECTION_ODD) // if you add isBlank() check
+            Arguments.of(null, SELECTION_NAME, SELECTION_ODD,"Selection id is null"),
+            Arguments.of(SELECTION_ID, null, SELECTION_ODD,"Selection name is null"),
+            Arguments.of(SELECTION_ID, SELECTION_NAME, null,"Selection odd is null"),
+            Arguments.of("", SELECTION_NAME, SELECTION_ODD,"Selection id is empty"),
+            Arguments.of(SELECTION_ID,"", SELECTION_ODD,"Selection name is empty"),
+            Arguments.of(" ", SELECTION_NAME, SELECTION_ODD,"Selection id is empty"),
+            Arguments.of(SELECTION_ID," ", SELECTION_ODD,"Selection name is empty")
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, Double odd) {
-        assertThrows(IllegalArgumentException.class, () -> new Selection(id, name, odd));
+    void constructor_ShouldThrow_WhenAnyArgumentIsInvalid(String id, String name, Double odd, String expectedMessage) {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> new Selection(id, name, odd));
+        assertThat(thrown.getMessage()).isEqualTo(expectedMessage);
     }
 }
 

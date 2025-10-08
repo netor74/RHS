@@ -32,20 +32,20 @@ class MarketTest {
 
     static Stream<Arguments> invalidConstructorArgs() {
         return Stream.of(
-            Arguments.of(null, MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, null, List.of()),
-            Arguments.of(MARKET_ID, MARKET_NAME, null),
-            Arguments.of("", MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, "", List.of()),
-            Arguments.of(" ", MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, " ", List.of())
+            Arguments.of(null, MARKET_NAME, List.of(), "Market id is null"),
+            Arguments.of(MARKET_ID, null, List.of(), "Market name is null"),
+            Arguments.of(MARKET_ID, MARKET_NAME, null, "Market selections are null"),
+            Arguments.of("", MARKET_NAME, List.of(), "Market id is empty"),
+            Arguments.of(MARKET_ID, "", List.of(), "Market name is empty"),
+            Arguments.of(" ", MARKET_NAME, List.of(), "Market id is empty"),
+            Arguments.of(MARKET_ID, " ", List.of(),"Market name is empty")
         );
     }
-
     @ParameterizedTest
     @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, List<Selection> selections) {
-        assertThrows(IllegalArgumentException.class, () -> new Market(id, name, selections));
+    void constructor_ShouldThrow_WhenAnyArgumentIsInvalid(String id, String name, List<Selection> selections, String expectedMessage) {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> new Market(id, name, selections));
+        assertThat(thrown.getMessage()).isEqualTo(expectedMessage);
     }
 }
 
