@@ -10,8 +10,8 @@ import java.util.Map;
 public class EventDTODeserializer {
     private static final List<String> ATTRIBUTE_LIST = List.of("name", "date");
 
-    private static boolean checkDateValidity(String date) {
-        if(!date.matches("\\d\\d\\d\\d([/\\-])\\d\\d([/\\-])\\d\\d")) {
+    private static boolean checkDateFormat(String date) {
+        if(!date.matches("\\d{4}([/\\-])\\d{2}([/\\-])\\d{2}")) {
             return false;
         }
         return LocalDate.parse(date).isAfter(LocalDate.now());
@@ -28,7 +28,7 @@ public class EventDTODeserializer {
         ValidatorUtils.checkArgument(
                 !(
                         rawPayload.get("date") instanceof String &&
-                        checkDateValidity((String) rawPayload.get("date"))
+                        checkDateFormat((String) rawPayload.get("date"))
                 ),
                 "Event DTO Date is invalid",
                 "deserialize_event_dto"
