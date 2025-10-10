@@ -2,23 +2,30 @@ package io.rubuy74.rhs.converter;
 
 import io.rubuy74.rhs.dto.EventDTO;
 import io.rubuy74.rhs.utils.ValidatorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public class EventDTOJSONConverter {
-    private static final List<String> ATTRIBUTE_LIST = List.of("event", "name", "date");
-
+    public static Logger logger = LoggerFactory.getLogger(EventDTOJSONConverter.class);
     public static EventDTO fromJson(Map<String,Object> rawPayload) {
-        ValidatorUtils.checkArgument(
-                rawPayload != null,
-                "EventDTO payload is null",
-                "deserialize_event_dto");
-        ValidatorUtils.checkAttributeList(
-                rawPayload,
-                ATTRIBUTE_LIST,
-                "deserialize_event_dto");
+        if (rawPayload == null) {
+            logger.error("operation=deserialize_event_dto, " +
+                    "msg=Raw payload is null");
+            return null;
+        }
+
+        List<String> attributeList = List.of("event", "name", "date");
+        List<String> errorMessages = ValidatorUtils.checkAttributeList(rawPayload,attributeList);
+        if(!errorMessages.isEmpty()) {
+            errorMessages.forEach((errorMessage) -> {
+                logger.error("operation=deserialize_event_dto, msg={}", errorMessage);
+            });
+            return null;
+        }
 
         String id = (String) rawPayload.get("id");
         String name = (String) rawPayload.get("name");
