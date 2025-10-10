@@ -20,8 +20,8 @@ public class Market {
         ValidatorUtils.checkArgument(id == null,        "Market id is null","create_market");
         ValidatorUtils.checkArgument(name == null,      "Market name is null","create_market");
         ValidatorUtils.checkArgument(selections == null,"Market date is null","create_market");
-        ValidatorUtils.checkArgument(id.isBlank(),   "Market id is empty","create_market");
-        ValidatorUtils.checkArgument(name.isBlank(), "Market name is empty","create_market");
+        ValidatorUtils.checkArgument(Objects.equals(id, ""),   "Market id is empty","create_market");
+        ValidatorUtils.checkArgument(Objects.equals(name, ""), "Market name is empty","create_market");
         this.id = id;
         this.name = name;
         this.selections = new java.util.ArrayList<>(selections);

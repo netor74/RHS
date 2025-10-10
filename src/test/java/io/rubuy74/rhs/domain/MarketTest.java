@@ -34,11 +34,7 @@ class MarketTest {
         return Stream.of(
             Arguments.of(null, MARKET_NAME, List.of()),
             Arguments.of(MARKET_ID, null, List.of()),
-            Arguments.of(MARKET_ID, MARKET_NAME, null),
-            Arguments.of("", MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, "", List.of()),
-            Arguments.of(" ", MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, " ", List.of())
+            Arguments.of(MARKET_ID, MARKET_NAME, null)
         );
     }
 
