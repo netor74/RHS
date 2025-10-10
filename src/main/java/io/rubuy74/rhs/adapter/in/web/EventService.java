@@ -21,7 +21,7 @@ import java.util.List;
 
 @Service
 public class EventService {
-    public static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
+    public static Logger logger = LoggerFactory.getLogger(EventService.class);
     private final WebClient webClient;
     private final RetryConfig retryConfig;
 
@@ -54,14 +54,14 @@ public class EventService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
                         (response)-> {
-                            LOGGER.error("operation=getEvents, msg='Failed to retrieve events, status={}", response.statusCode());
+                            logger.error("operation=getEvents, msg='Failed to retrieve events, status={}", response.statusCode());
                             throw new EventListingException(
                                     "Failed to retrieve events. Status" + response.statusCode()
                             );
                         })
                 .onStatus(HttpStatusCode::is5xxServerError,
                         (response) -> {
-                            LOGGER.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.statusCode());
+                            logger.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.statusCode());
                             throw new EventListingException(
                                     "MOS service error. Status: " + response.statusCode());
                         })
@@ -69,12 +69,12 @@ public class EventService {
                 .retryWhen(Retry.backoff(maxRetries,Duration.ofMillis(backoff))
                         .filter(throwable -> throwable instanceof ResourceAccessException | throwable instanceof EventListingException)
                         .doBeforeRetry(retrySignal -> {
-                            LOGGER.error("operation=getEvents, msg=Retrying attempt {}, status={}",
+                            logger.error("operation=getEvents, msg=Retrying attempt {}, status={}",
                                     retrySignal.totalRetries() + 1,
                                     retrySignal.failure().getMessage());
                         })
                         .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
-                            LOGGER.error("operation=getEvents, msg=Retries exhausted after {} attempts, lastError={}",
+                            logger.error("operation=getEvents, msg=Retries exhausted after {} attempts, lastError={}",
                                     retrySignal.totalRetries() + 1,
                                     retrySignal.failure().getMessage()
                             );

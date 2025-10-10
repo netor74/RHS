@@ -6,12 +6,14 @@ import io.rubuy74.rhs.port.out.MarketChangePublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class KafkaMarketChangePublisher implements MarketChangePublisher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaMarketChangePublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaMarketChangePublisher.class);
     private static final String TOPIC = "market-changes";
     private final ObjectMapper mapper ;
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
@@ -29,7 +31,7 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
             payload = mapper.writeValueAsBytes(marketOperation);
 
         } catch (Exception e) {
-            LOGGER.error("operation=serialize_market_operation, " +
+            logger.error("operation=serialize_market_operation, " +
                     "msg=Failed to serialize MarketOperation to JSON, " +
                     "error={}", e.getMessage(), e);
             return;
@@ -39,18 +41,18 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
             kafkaTemplate.send(TOPIC, payload)
                 .whenComplete((result, e) -> {
                     if (e != null) {
-                        LOGGER.error("operation=send_market_operation," +
+                        logger.error("operation=send_market_operation," +
                                 "msg=Failed to send MarketOperation message, " +
                                 "error={}", e.getMessage(), e);
                     } else  {
-                        LOGGER.info("operation=send_market_operation," +
+                        logger.info("operation=send_market_operation," +
                                 "msg=Sent MarketOperation to market-changes, " +
                                 "payload={}", marketOperation.toString());
                     }
                 }
             );
         } catch (Exception e) {
-            LOGGER.error("operation=send_market_operation, " +
+            logger.error("operation=send_market_operation, " +
                     "msg=Caught Exception while sending MarketOperation message, " +
                     "error= {}", e.getMessage(), e);
         }
