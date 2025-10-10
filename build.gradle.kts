@@ -27,9 +27,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.retry/spring-retry
     implementation("org.springframework.retry:spring-retry:2.0.12")
 
-
-    implementation("com.google.guava:guava:32.0.1-android")
-
     // # Kafka Dependencies
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
     implementation("org.apache.kafka:kafka-clients:4.0.0")

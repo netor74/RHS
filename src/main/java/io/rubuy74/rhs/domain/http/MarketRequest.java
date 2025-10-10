@@ -1,8 +1,7 @@
 package io.rubuy74.rhs.domain.http;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import io.rubuy74.rhs.dto.EventDTO;
+import io.rubuy74.rhs.domain.EventDTO;
 import io.rubuy74.rhs.domain.Selection;
 
 import java.sql.Timestamp;
@@ -34,11 +33,11 @@ public class MarketRequest {
     }
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this.getClass())
-                .add("marketId",marketId)
-                .add("marketName",marketName)
-                .add("event",eventDTO)
-                .add("selections",selections)
-                .toString();
+        return "MarketRequest{" +
+                "marketId='" + marketId + '\'' +
+                ", marketName='" + marketName + '\'' +
+                ", event=" + eventDTO +
+                ", selections=" + selections +
+                "}";
     }
 }
