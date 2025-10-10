@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MarketOperationDeserializer {
-    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "marketOperation");
-    private static final List<String> MARKET_REQUEST_ATTRIBUTE_LIST = List.of("event", "selection");
+    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "event", "selection");
 
     @SuppressWarnings("unchecked")
     public static MarketOperation deserialize(LinkedHashMap<String, Object> rawPayload) {
@@ -27,12 +26,6 @@ public class MarketOperationDeserializer {
                 ATTRIBUTE_LIST,
                 "deserialize_market_operation"
         );
-        ValidatorUtils.checkAttributeList(
-                rawPayload,
-                MARKET_REQUEST_ATTRIBUTE_LIST,
-                "deserialize_market_request"
-        );
-
 
         Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
