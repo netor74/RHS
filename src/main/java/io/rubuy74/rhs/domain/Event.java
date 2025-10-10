@@ -37,8 +37,8 @@ public class Event {
         ValidatorUtils.checkArgument(id == null,"Event id is null","create_event");
         ValidatorUtils.checkArgument(name == null,"Event name is null","create_event");
         ValidatorUtils.checkArgument(date == null,"Event date is null","create_event");
-        ValidatorUtils.checkArgument(id.isBlank(),   "Event id is empty","create_event");
-        ValidatorUtils.checkArgument(name.isBlank(), "Event name is empty","create_event");
+        ValidatorUtils.checkArgument(Objects.equals(id, ""),   "Market id is empty","create_event");
+        ValidatorUtils.checkArgument(Objects.equals(name, ""), "Market name is empty","create_event");
         this.id = id;
         this.name = name;
         this.date = date;

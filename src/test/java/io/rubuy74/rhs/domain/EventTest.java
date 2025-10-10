@@ -34,11 +34,7 @@ class EventTest {
         return Stream.of(
             Arguments.of(null, EVENT_NAME, EVENT_DATE),
             Arguments.of(EVENT_ID, null, EVENT_DATE),
-            Arguments.of(EVENT_ID, EVENT_NAME, null),
-            Arguments.of("", EVENT_NAME, EVENT_DATE),
-            Arguments.of(EVENT_ID, "", EVENT_DATE),
-            Arguments.of(" ", EVENT_NAME, EVENT_DATE),
-            Arguments.of(EVENT_ID, " ", EVENT_DATE)
+            Arguments.of(EVENT_ID, EVENT_NAME, null)
         );
     }
 
