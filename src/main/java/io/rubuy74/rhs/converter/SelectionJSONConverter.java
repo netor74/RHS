@@ -1,4 +1,4 @@
-package io.rubuy74.rhs.converter.deserialization;
+package io.rubuy74.rhs.converter;
 
 import io.rubuy74.rhs.domain.Selection;
 import io.rubuy74.rhs.utils.ValidatorUtils;
