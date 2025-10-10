@@ -5,26 +5,16 @@ import java.util.List;
 
 public class Event {
     @JsonProperty
-    private String id;
+    String id;
 
     @JsonProperty
-    private String name;
+    String name;
 
     @JsonProperty
-    private String date;
+    String date;
 
     @JsonProperty
     private List<Market> markets = new java.util.ArrayList<>();
-
-    public String getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public String getDate() {
-        return date;
-    }
 
     public Event(String id, String name, String date) {
         this.id = id;

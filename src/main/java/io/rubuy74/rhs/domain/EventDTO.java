@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class EventDTO {
     @JsonProperty
-    private String id;
+    String id;
 
     @JsonProperty
-    private String name;
+    String name;
 
     @JsonProperty
-    private String date;
+    String date;
 
     public EventDTO() {}
 
@@ -25,9 +25,9 @@ public class EventDTO {
     }
 
     public EventDTO(Event event) {
-        this.id = event.getId();
-        this.name = event.getName();
-        this.date = event.getDate();
+        this.id = event.id;
+        this.name = event.name;
+        this.date = event.date;
     }
 
     public EventDTO(String id, String name, String date) {

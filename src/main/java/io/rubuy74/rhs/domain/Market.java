@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Market {
     @JsonProperty
-    private String id;
+    String id;
 
     @JsonProperty
-    private String name;
+    String name;
 
     @JsonProperty
-    private List<Selection> selections;
+    List<Selection> selections;
 
     public Market(String id, String name, List<Selection> selections) {
         this.id = id;
