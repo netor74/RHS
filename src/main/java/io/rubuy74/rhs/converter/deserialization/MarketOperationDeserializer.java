@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MarketOperationDeserializer {
-    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "operationType");
-    private static final List<String> MARKET_REQUEST_ATTRIBUTE_LIST = List.of("event", "selections");
+    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "marketOperation");
+    private static final List<String> MARKET_REQUEST_ATTRIBUTE_LIST = List.of("event", "selection");
 
     @SuppressWarnings("unchecked")
     public static MarketOperation deserialize(LinkedHashMap<String, Object> rawPayload) {
@@ -19,20 +19,20 @@ public class MarketOperationDeserializer {
         MarketRequest marketRequest = new MarketRequest();
 
         ValidatorUtils.checkArgument(
-                rawPayload == null,
+                rawPayload != null,
                 "MarketOperation payload is null",
                 "deserialize_market_operation");
         ValidatorUtils.checkAttributeList(
                 rawPayload,
                 ATTRIBUTE_LIST
         );
-        Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
         ValidatorUtils.checkAttributeList(
-                marketRequestMap,
+                rawPayload,
                 MARKET_REQUEST_ATTRIBUTE_LIST
         );
 
 
+        Map<String, Object> marketRequestMap = (Map<String, Object>) rawPayload.get("marketRequest");
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
 
         // add event to marketRequest
@@ -45,7 +45,7 @@ public class MarketOperationDeserializer {
         // add selections to marketRequest
         marketRequest.selections = selectionsMap.stream().map(SelectionDeserializer::deserialize).toList();
         marketOperation.setMarketRequest(marketRequest);
-        marketOperation.setOperationType(OperationType.valueOf((String) rawPayload.get("operationType")));
+        marketOperation.setOperationType(OperationType.valueOf((String) marketRequestMap.get("operationType")));
         return marketOperation;
     }
 }
