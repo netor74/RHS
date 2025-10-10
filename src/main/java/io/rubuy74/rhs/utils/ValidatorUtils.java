@@ -1,38 +1,27 @@
 package io.rubuy74.rhs.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ValidatorUtils {
-    private static final Logger logger = LoggerFactory.getLogger(ValidatorUtils.class);
-    public static void checkAttributeList(
+
+
+    public static List<String> checkAttributeList(
             Map<String,Object> rawPayload,
-            List<String> attributeList,
-            String operation
+            List<String> attributeList
     ) {
-        List<String> errorMessages = new ArrayList<>();
+        List<String> messages = new ArrayList<>();
         attributeList.forEach(attribute -> {
             if(!rawPayload.containsKey(attribute)) {
-                errorMessages.add("attribute '" + attribute + "' doesn't exist");
+                messages.add("attribute '" + attribute + "' doesn't exist");
             }
         });
-
-        if(!errorMessages.isEmpty()) {
-            errorMessages.forEach((errorMessage) -> {
-                logger.error("operation={}, msg={}",operation, errorMessage);
-            });
-            throw new IllegalArgumentException(errorMessages.toString());
-        }
+        return messages;
     }
 
-    public static void checkArgument(boolean expression, String errorMessage, String operation) {
+    public static void checkArgument(boolean expression, String errorMessage) {
         if (!expression) {
-            logger.error("operation=, {}" +
-                    "msg={}",operation, errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
     }
