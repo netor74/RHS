@@ -10,23 +10,19 @@ public class EventDTOJSONConverter {
     public static Logger logger = LoggerFactory.getLogger(EventDTOJSONConverter.class);
     public static EventDTO fromJson(Map<String,Object> rawPayload) {
         if (rawPayload == null) {
-            logger.error("operation=parse_event_dto_json, " +
-                    "msg=Raw payload is null");
+            logger.error("raw payload is null");
             return null;
         }
         if (!rawPayload.containsKey("event")) {
-            logger.error("operation=parse_event_dto_json, " +
-                    "msg=Event is null");
+            logger.error("event is null");
             return null;
         }
         if (!rawPayload.containsKey("name")) {
-            logger.error("operation=parse_event_dto_json, " +
-                    "msg=Name is null");
+            logger.error("name is null");
             return null;
         }
         if (!rawPayload.containsKey("date")) {
-            logger.error("operation=parse_event_dto_json, " +
-                    "msg=Date is null");
+            logger.error("date is null");
             return null;
         }
 

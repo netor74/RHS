@@ -28,14 +28,14 @@ public class EventService {
                 .onStatus(HttpStatusCode::is4xxClientError,
                         (request,response)-> {
 
-                            logger.error("operation=getEvents, msg='Failed to retrieve events, status={}", response.getStatusCode());
+                            logger.error("Failed to retrieve events. Status: {}", response.getStatusCode());
                             throw new EventListingException(
                                     "Failed to retrieve events. Status" + response.getStatusCode()
                             );
                         })
                 .onStatus(HttpStatusCode::is5xxServerError,
                         (request, response) -> {
-                            logger.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.getStatusCode());
+                            logger.error("Internal Server Problem. Status: {}", response.getStatusCode());
                             throw new EventListingException(
                                     "MOS service error. Status: " + response.getStatusCode());
                         })
