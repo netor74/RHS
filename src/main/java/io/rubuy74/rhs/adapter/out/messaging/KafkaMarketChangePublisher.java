@@ -28,25 +28,18 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
         byte[] payload;
         try {
             payload = mapper.writeValueAsBytes(marketOperation);
-
         } catch (Exception e) {
             logger.error("Failed to serialize MarketOperation to JSON: {}", e.getMessage(), e);
             return;
         }
 
-        try {
-            CompletableFuture<SendResult<String,byte[]>> future= kafkaTemplate.send(TOPIC, payload);
-            future.whenComplete((result, e) -> {
-                if (e != null) {
-                    logger.error("Failed to send MarketOperation message: {}", e.getMessage(), e);
-                } else  {
-                    logger.info("Sent MarketOperation to market-changes: {}", payload);
-                }
-            });
-        } catch (Exception e) {
-            logger.error("Failed to send MarketOperation message: {}", e.getMessage(), e);
-            return;
-        }
-
+        CompletableFuture<SendResult<String,byte[]>> future= kafkaTemplate.send(TOPIC, payload);
+        future.whenComplete((result, e) -> {
+            if (e != null) {
+                logger.error("Failed to send MarketOperation message: {}", e.getMessage(), e);
+            } else  {
+                logger.info("Sent MarketOperation to market-changes: {}", payload);
+            }
+        });
     }
 }
