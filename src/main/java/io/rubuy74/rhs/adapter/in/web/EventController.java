@@ -1,5 +1,6 @@
 package io.rubuy74.rhs.adapter.in.web;
 
+import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
 import io.rubuy74.rhs.domain.http.EventListingResponse;
 import io.rubuy74.rhs.domain.http.Status;
