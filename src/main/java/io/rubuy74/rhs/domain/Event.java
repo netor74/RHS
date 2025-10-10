@@ -1,10 +1,10 @@
 package io.rubuy74.rhs.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class Event {
@@ -15,7 +15,6 @@ public class Event {
     private final String name;
 
     @JsonProperty
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private final LocalDate date;
 
     @JsonProperty
