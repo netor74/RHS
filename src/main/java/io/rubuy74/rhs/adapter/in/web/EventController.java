@@ -30,10 +30,10 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<EventListingResponse> getEvents() {
+    public EventListingResponse getEvents() {
         try {
             List<Event> events = eventService.getEvents(restClient);
-            return ResponseEntity.ok(new EventListingResponse(Status.SUCCESS,"",events));
+            return new EventListingResponse(Status.SUCCESS,"",events);
 
         } catch (EventListingException  e) {
             EventListingResponse eventListingResponse = new EventListingResponse(
@@ -44,7 +44,7 @@ public class EventController {
 
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE) // Use 503 for external dependency failure
-                    .body(eventListingResponse);
+                    .body(eventListingResponse).getBody();
         } catch (Exception e) {
             EventListingResponse eventListingResponse = new EventListingResponse(
                     Status.ERROR,
@@ -53,7 +53,7 @@ public class EventController {
             );
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR) // Use 500 for internal failure
-                    .body(eventListingResponse);
+                    .body(eventListingResponse).getBody();
         }
     }
 }
