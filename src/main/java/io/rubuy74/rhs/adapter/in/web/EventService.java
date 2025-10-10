@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
@@ -30,19 +31,18 @@ public class EventService {
             @Value("${mos.service.base-url}")  String baseUrl,
             RetryConfig retryConfig
     ) {
-        int timeout = retryConfig.getTimeoutMs();
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl + "/api/v1")
                 .clientConnector(
                         new ReactorClientHttpConnector(
-                                HttpClient.create().responseTimeout(Duration.ofMillis(timeout))
+                                HttpClient.create().responseTimeout(Duration.ofMillis(250))
                         )
                 )
                 .build();
         this.retryConfig = retryConfig;
     }
 
-    public Mono<List<Event>> getEvents() {
+    public Mono<List<Event>> getEvents() throws InterruptedException {
         ParameterizedTypeReference<List<Event>> responseType =
                 new ParameterizedTypeReference<>() {};
 
@@ -69,16 +69,16 @@ public class EventService {
                 .retryWhen(Retry.backoff(maxRetries,Duration.ofMillis(backoff))
                         .filter(throwable -> throwable instanceof ResourceAccessException | throwable instanceof EventListingException)
                         .doBeforeRetry(retrySignal -> {
-                            logger.error("operation=getEvents, msg=Retrying attempt {}, status={}",
+                            logger.error("operation=getEvents, msg=Retrying attempt {}..., status={}",
                                     retrySignal.totalRetries() + 1,
                                     retrySignal.failure().getMessage());
                         })
                         .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
-                            logger.error("operation=getEvents, msg=Retries exhausted after {} attempts, lastError={}",
+                            logger.error("operation=getEvents, msg=Retries exhausted after {} attempts. lastError:{}",
                                     retrySignal.totalRetries() + 1,
                                     retrySignal.failure().getMessage()
                             );
-                            throw new EventListingException("Event retrieval failed after all retries. Status= "+ retrySignal.failure().getMessage());
+                            throw new EventListingException("Event retrieval failed after all retries. Status: "+ retrySignal.failure().getMessage());
                         }))
                 );
     }

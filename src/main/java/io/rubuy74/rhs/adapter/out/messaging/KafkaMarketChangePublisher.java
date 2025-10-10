@@ -38,23 +38,22 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
         }
 
         try {
-            kafkaTemplate.send(TOPIC, payload)
-                .whenComplete((result, e) -> {
-                    if (e != null) {
-                        logger.error("operation=send_market_operation," +
-                                "msg=Failed to send MarketOperation message, " +
-                                "error={}", e.getMessage(), e);
-                    } else  {
-                        logger.info("operation=send_market_operation," +
-                                "msg=Sent MarketOperation to market-changes, " +
-                                "payload={}", marketOperation.toString());
-                    }
+            CompletableFuture<SendResult<String,byte[]>> future= kafkaTemplate.send(TOPIC, payload);
+            future.whenComplete((result, e) -> {
+                if (e != null) {
+                    logger.error("operation=send_market_operation," +
+                            "msg=Failed to send MarketOperation message, " +
+                            "error:{}", e.getMessage(), e);
+                } else  {
+                    logger.info("operation=send_market_operation," +
+                            "msg=Sent MarketOperation to market-changes: " +
+                            "payload={}", marketOperation.toString());
                 }
-            );
+            });
         } catch (Exception e) {
             logger.error("operation=send_market_operation, " +
-                    "msg=Caught Exception while sending MarketOperation message, " +
-                    "error= {}", e.getMessage(), e);
+                    "msg:Caught Exception while sending MarketOperation message, " +
+                    "error: {}", e.getMessage(), e);
         }
 
     }
