@@ -1,7 +1,6 @@
 package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.converter.EventDTOJSONConverter;
@@ -35,10 +34,4 @@ public class MarketOperation {
         this.operationType = operationType;
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this.getClass())
-                .add("marketRequest", marketRequest)
-                .add("operationType", operationType).toString();
-    }
 }

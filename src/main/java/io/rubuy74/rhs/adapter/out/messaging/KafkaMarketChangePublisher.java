@@ -47,7 +47,7 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
                 } else  {
                     logger.info("operation=send_market_operation," +
                             "msg=Sent MarketOperation to market-changes: " +
-                            "payload={}", marketOperation.toString());
+                            "payload={}", payload);
                 }
             });
         } catch (Exception e) {

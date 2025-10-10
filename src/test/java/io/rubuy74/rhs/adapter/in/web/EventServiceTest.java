@@ -1,6 +1,5 @@
 package io.rubuy74.rhs.adapter.in.web;
 
-import io.rubuy74.rhs.config.property.RetryConfig;
 import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
 import org.junit.jupiter.api.Test;
@@ -37,9 +36,6 @@ class EventServiceTest {
     @Mock 
     private RestClient.ResponseSpec responseSpec;
 
-    @Mock
-    private RetryConfig retryConfig;
-
     private static final List<Event> EXPECTED_EVENTS = List.of(
             new Event("1", "Mock Event 1", LocalDate.parse("2025-12-01")),
             new Event("2", "Mock Event 2", LocalDate.parse("2025-12-02"))
@@ -48,12 +44,12 @@ class EventServiceTest {
     private EventService createEventService() {
         when(restClientBuilder.baseUrl(anyString())).thenReturn(restClientBuilder);
         when(restClientBuilder.build()).thenReturn(restClient);
-        return new EventService(restClientBuilder, "http://localhost:3000",retryConfig);
+        return new EventService(restClientBuilder, "http://localhost:3000");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() throws InterruptedException {
+    void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() {
         EventService eventService = createEventService();
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
