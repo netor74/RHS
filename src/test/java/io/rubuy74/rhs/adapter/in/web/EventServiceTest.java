@@ -4,9 +4,11 @@ import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
@@ -21,9 +23,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
-    @Mock
-    private RestClient.Builder restClientBuilder;
-    
+    @InjectMocks
+    private EventService eventService;
+
     @Mock
     private RestClient restClient;
     
@@ -41,16 +43,9 @@ class EventServiceTest {
             new Event("2", "Mock Event 2", LocalDate.parse("2025-12-02"))
     );
 
-    private EventService createEventService() {
-        when(restClientBuilder.baseUrl(anyString())).thenReturn(restClientBuilder);
-        when(restClientBuilder.build()).thenReturn(restClient);
-        return new EventService(restClientBuilder, "http://localhost:3000");
-    }
-
     @Test
     @SuppressWarnings("unchecked")
     void getEvents_ShouldReturnEvents_WhenApiCallIsSuccessful() {
-        EventService eventService = createEventService();
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -58,7 +53,7 @@ class EventServiceTest {
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(EXPECTED_EVENTS);
 
-        List<Event> actualEvents = eventService.getEvents();
+        List<Event> actualEvents = eventService.getEvents(restClient);
         assertThat(actualEvents).hasSize(2);
         assertThat(actualEvents.get(0).getId()).isEqualTo("1");
         assertThat(actualEvents.get(0).getName()).isEqualTo("Mock Event 1");
@@ -69,8 +64,6 @@ class EventServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getEvents_ShouldThrowEventListingException_WhenApiReturns4xxError() {
-        EventService eventService = createEventService();
-        
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
@@ -78,7 +71,7 @@ class EventServiceTest {
         when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
             throw new EventListingException("Failed to retrieve events. Status400 BAD_REQUEST");
         });
-        assertThatThrownBy(() -> eventService.getEvents())
+        assertThatThrownBy(() -> eventService.getEvents(restClient))
                 .isInstanceOf(EventListingException.class)
                 .hasMessageContaining("Failed to retrieve events");
     }
@@ -86,8 +79,6 @@ class EventServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getEvents_ShouldThrowEventListingException_WhenApiReturns5xxError() {
-        EventService eventService = createEventService();
-        
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
@@ -95,7 +86,7 @@ class EventServiceTest {
         when(responseSpec.onStatus(any(), any())).thenAnswer(invocation -> {
             throw new EventListingException("MOS service error. Status: 500 INTERNAL_SERVER_ERROR");
         });
-        assertThatThrownBy(() -> eventService.getEvents())
+        assertThatThrownBy(() -> eventService.getEvents(restClient))
                 .isInstanceOf(EventListingException.class)
                 .hasMessageContaining("MOS service error");
     }
