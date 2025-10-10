@@ -24,9 +24,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    // https://mvnrepository.com/artifact/org.springframework.retry/spring-retry
-    implementation("org.springframework.retry:spring-retry:2.0.12")
-
     // # Kafka Dependencies
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
     implementation("org.apache.kafka:kafka-clients:4.0.0")
