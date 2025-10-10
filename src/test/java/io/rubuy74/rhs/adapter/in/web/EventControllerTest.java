@@ -13,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestClient;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,8 +46,8 @@ class EventControllerTest {
     private EventService eventService;
 
     private static final List<Event> MOCK_EVENTS = List.of(
-            new Event("1", "Event 1", LocalDate.parse("2025-10-10")),
-            new Event("2", "Event 2", LocalDate.parse("2025-10-11"))
+            new Event("1", "Event 1", "2025-10-10"),
+            new Event("2", "Event 2", "2025-10-11")
     );
 
     @Test
