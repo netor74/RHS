@@ -1,24 +1,16 @@
 package io.rubuy74.rhs.converter.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.rubuy74.rhs.domain.MarketOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InvalidObjectException;
-
 public class MarketOperationSerializer {
 
-    private final ObjectMapper mapper;
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketOperationSerializer.class);
 
-    public MarketOperationSerializer() {
-        this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
-    }
-
-    public byte[] serialize(MarketOperation marketOperation) throws InvalidObjectException {
+    public static byte[] serialize(MarketOperation marketOperation) {
         byte[] payload;
         try {
             payload = mapper.writeValueAsBytes(marketOperation);
@@ -27,7 +19,7 @@ public class MarketOperationSerializer {
             LOGGER.error("operation=serialize_market_operation, " +
                     "msg=Failed to serialize MarketOperation to JSON, " +
                     "error={}", e.getMessage(), e);
-            throw new InvalidObjectException(e.getMessage());
+            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.rubuy74.rhs.adapter.out.messaging;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rubuy74.rhs.converter.serialization.MarketOperationSerializer;
 import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.port.out.MarketChangePublisher;
@@ -15,15 +16,14 @@ public class KafkaMarketChangePublisher implements MarketChangePublisher {
     private static final String TOPIC = "market-changes";
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
-    public KafkaMarketChangePublisher(KafkaTemplate<String, byte[]> kafkaTemplate) {
+    public KafkaMarketChangePublisher(ObjectMapper objectMapper,KafkaTemplate<String, byte[]> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
     public void publish(MarketOperation marketOperation) {
+        byte[] payload = MarketOperationSerializer.serialize(marketOperation);
         try {
-            MarketOperationSerializer serializer = new MarketOperationSerializer();
-            byte[] payload = serializer.serialize(marketOperation);
             kafkaTemplate.send(TOPIC, payload)
                 .whenComplete((result, e) -> {
                     if (e != null) {

@@ -35,9 +35,6 @@ dependencies {
     // WebFlux aligned to Spring Boot BOM
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0")
 }
 
 tasks.withType<Test> {
