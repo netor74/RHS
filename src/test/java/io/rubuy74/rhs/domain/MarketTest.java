@@ -16,8 +16,8 @@ class MarketTest {
 
     @Test
     void constructor_ShouldSetFields_WhenValidArgsProvided() {
-        List<Selection> selectionList = List.of(new Selection(SELECTION_ID, SELECTION_NAME, SELECTION_ODD));
-        Market market = new Market(MARKET_ID, MARKET_NAME, selectionList);
+        List<Selection> sels = List.of(new Selection(SELECTION_ID, SELECTION_NAME, SELECTION_ODD));
+        Market market = new Market(MARKET_ID, MARKET_NAME, sels);
         assertThat(market).isNotNull();
         assertThat(market.toString()).contains("Market");
     }
