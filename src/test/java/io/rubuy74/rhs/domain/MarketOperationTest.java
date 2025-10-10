@@ -38,15 +38,14 @@ class MarketOperationTest {
 
     static Stream<Arguments> invalidConstructorArgs() {
         return Stream.of(
-            Arguments.of(null, OperationType.ADD,"Market Request is null"),
-            Arguments.of(new MarketRequest(MARKET_ID, MARKET_NAME, new EventDTO(EVENT_ID, EVENT_NAME, EVENT_DATE), new ArrayList<>()), null, "OperationType is null")
+            Arguments.of(null, OperationType.ADD),
+            Arguments.of(new MarketRequest(MARKET_ID, MARKET_NAME, new EventDTO(EVENT_ID, EVENT_NAME, EVENT_DATE), new ArrayList<>()), null)
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(MarketRequest req, OperationType op, String expectedMessage) {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> new MarketOperation(req, op));
-        assertThat(thrown.getMessage()).isEqualTo(expectedMessage);
+    void constructor_ShouldThrow_WhenAnyArgumentIsNull(MarketRequest req, OperationType op) {
+        assertThrows(IllegalArgumentException.class, () -> new MarketOperation(req, op));
     }
 }

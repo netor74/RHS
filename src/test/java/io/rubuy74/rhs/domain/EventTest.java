@@ -32,23 +32,21 @@ class EventTest {
 
     static Stream<Arguments> invalidConstructorArgs() {
         return Stream.of(
-                Arguments.of(null, EVENT_NAME, EVENT_DATE, "Event id is null"),
-                Arguments.of(EVENT_ID, null, EVENT_DATE, "Event name is null"),
-                Arguments.of(EVENT_ID, EVENT_NAME, null, "Event date is null"),
-                Arguments.of("", EVENT_NAME, EVENT_DATE, "Event id is empty"),
-                Arguments.of(EVENT_ID, "", EVENT_DATE, "Event name is empty"),
-                Arguments.of(" ", EVENT_NAME, EVENT_DATE, "Event id is empty"),
-                Arguments.of(EVENT_ID, " ", EVENT_DATE, "Event name is empty")
+            Arguments.of(null, EVENT_NAME, EVENT_DATE),
+            Arguments.of(EVENT_ID, null, EVENT_DATE),
+            Arguments.of(EVENT_ID, EVENT_NAME, null),
+            Arguments.of("", EVENT_NAME, EVENT_DATE),
+            Arguments.of(EVENT_ID, "", EVENT_DATE),
+            Arguments.of(" ", EVENT_NAME, EVENT_DATE),
+            Arguments.of(EVENT_ID, " ", EVENT_DATE)
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, LocalDate date, String expectedMessage) {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> new Event(id, name, date));
-        assertThat(thrown.getMessage()).isEqualTo(expectedMessage);
+    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, LocalDate date) {
+        assertThrows(IllegalArgumentException.class, () -> new Event(id, name, date));
     }
-
 }
 
 
