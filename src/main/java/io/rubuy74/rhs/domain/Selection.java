@@ -14,15 +14,6 @@ public class Selection {
     private Double odd;
 
     public Selection(String id, String name, Double odd) {
-        if (id == null) {
-            throw new IllegalArgumentException("id is null");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("name is null");
-        }
-        if (odd == null) {
-            throw new IllegalArgumentException("odd is null");
-        }
         this.id = id;
         this.name = name;
         this.odd = odd;
