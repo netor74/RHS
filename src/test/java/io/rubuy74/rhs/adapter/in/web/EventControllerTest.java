@@ -13,9 +13,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 @WebMvcTest(EventController.class)
 class EventControllerTest {
@@ -33,11 +31,8 @@ class EventControllerTest {
 
     @Test
     void getEvents_ShouldReturnSuccessResponse_WhenServiceSucceeds() throws Exception {
-        when(eventService.getEvents()).thenReturn(reactor.core.publisher.Mono.just(MOCK_EVENTS));
-        var mvcResult = mockMvc.perform(get("/api/v1/events"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-        mockMvc.perform(asyncDispatch(mvcResult))
+        when(eventService.getEvents()).thenReturn(MOCK_EVENTS);
+        mockMvc.perform(get("/api/v1/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.message").value(""))
@@ -52,11 +47,8 @@ class EventControllerTest {
     void getEvents_ShouldReturnServiceUnavailable_WhenEventListingExceptionIsThrown() throws Exception {
         String errorMessage = "Failed to retrieve events. Status400 BAD_REQUEST";
         when(eventService.getEvents())
-                .thenReturn(reactor.core.publisher.Mono.error(new EventListingException(errorMessage)));
-        var mvcResult = mockMvc.perform(get("/api/v1/events"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-        mockMvc.perform(asyncDispatch(mvcResult))
+                .thenThrow(new EventListingException(errorMessage));
+        mockMvc.perform(get("/api/v1/events"))
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.status").value("ERROR"))
                 .andExpect(jsonPath("$.message").value(errorMessage))
@@ -66,15 +58,13 @@ class EventControllerTest {
 
     @Test
     void getEvents_ShouldReturnInternalServerError_WhenGenericExceptionIsThrown() throws Exception {
+        String errorMessage = "Something went wrong internally";
         when(eventService.getEvents())
-                .thenReturn(reactor.core.publisher.Mono.error(new RuntimeException("Unknown Internal Server Error")));
-        var mvcResult = mockMvc.perform(get("/api/v1/events"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-        mockMvc.perform(asyncDispatch(mvcResult))
+                .thenThrow(new RuntimeException(errorMessage));
+        mockMvc.perform(get("/api/v1/events"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value("ERROR"))
-                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error"))
+                .andExpect(jsonPath("$.message").value(errorMessage))
                 .andExpect(jsonPath("$.events").isArray())
                 .andExpect(jsonPath("$.events").isEmpty());
     }
@@ -82,14 +72,11 @@ class EventControllerTest {
     @Test
     void getEvents_ShouldHandleNullExceptionMessage() throws Exception {
         when(eventService.getEvents())
-                .thenReturn(reactor.core.publisher.Mono.error(new RuntimeException((String) null)));
-        var mvcResult = mockMvc.perform(get("/api/v1/events"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-        mockMvc.perform(asyncDispatch(mvcResult))
+                .thenThrow(new RuntimeException((String) null));
+        mockMvc.perform(get("/api/v1/events"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value("ERROR"))
-                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("Unknown error."))
                 .andExpect(jsonPath("$.events").isArray())
                 .andExpect(jsonPath("$.events").isEmpty());
     }

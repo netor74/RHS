@@ -8,78 +8,67 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
-import reactor.util.retry.Retry;
 
-import java.time.Duration;
 import java.util.List;
 
 @Service
 public class EventService {
     public static Logger logger = LoggerFactory.getLogger(EventService.class);
-    private final WebClient webClient;
+    private final RestClient restClient;
     private final RetryConfig retryConfig;
 
     public EventService(
-            WebClient.Builder webClientBuilder,
+            RestClient.Builder restClient,
             @Value("${mos.service.base-url}")  String baseUrl,
             RetryConfig retryConfig
     ) {
-        this.webClient = webClientBuilder
+        this.restClient = restClient
                 .baseUrl(baseUrl + "/api/v1")
-                .clientConnector(
-                        new ReactorClientHttpConnector(
-                                HttpClient.create().responseTimeout(Duration.ofMillis(250))
-                        )
-                )
                 .build();
         this.retryConfig = retryConfig;
     }
 
-    public Mono<List<Event>> getEvents() throws InterruptedException {
+    public List<Event> getEvents() throws InterruptedException {
         ParameterizedTypeReference<List<Event>> responseType =
                 new ParameterizedTypeReference<>() {};
 
         int maxRetries = retryConfig.getMaxRetries();
-        int backoff = retryConfig.getBackoffTimeMs();
+        int backoff = retryConfig.getBackoff();
 
-        return webClient.get()
-                .uri("/events")
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError,
-                        (response)-> {
-                            logger.error("operation=getEvents, msg='Failed to retrieve events, status={}", response.statusCode());
-                            throw new EventListingException(
-                                    "Failed to retrieve events. Status" + response.statusCode()
-                            );
-                        })
-                .onStatus(HttpStatusCode::is5xxServerError,
-                        (response) -> {
-                            logger.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.statusCode());
-                            throw new EventListingException(
-                                    "MOS service error. Status: " + response.statusCode());
-                        })
-                .bodyToMono(responseType)
-                .retryWhen(Retry.backoff(maxRetries,Duration.ofMillis(backoff))
-                        .filter(throwable -> throwable instanceof ResourceAccessException | throwable instanceof EventListingException)
-                        .doBeforeRetry(retrySignal -> {
-                            logger.error("operation=getEvents, msg=Retrying attempt {}..., status={}",
-                                    retrySignal.totalRetries() + 1,
-                                    retrySignal.failure().getMessage());
-                        })
-                        .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
-                            logger.error("operation=getEvents, msg=Retries exhausted after {} attempts. lastError:{}",
-                                    retrySignal.totalRetries() + 1,
-                                    retrySignal.failure().getMessage()
-                            );
-                            throw new EventListingException("Event retrieval failed after all retries. Status: "+ retrySignal.failure().getMessage());
-                        }))
-                );
+        for (int i = 0; i <= maxRetries; i++) {
+            try {
+                return restClient.get()
+                        .uri("/events")
+                        .retrieve()
+                        .onStatus(HttpStatusCode::is4xxClientError,
+                                (request,response)-> {
+
+                                    logger.error("operation=getEvents, msg='Failed to retrieve events, status={}", response.getStatusCode());
+                                    throw new EventListingException(
+                                            "Failed to retrieve events. Status" + response.getStatusCode()
+                                    );
+                                })
+                        .onStatus(HttpStatusCode::is5xxServerError,
+                                (request, response) -> {
+                                    logger.error("operation:getEvents, msg:Internal Server Problem, status: {}", response.getStatusCode());
+                                    throw new EventListingException(
+                                            "MOS service error. Status: " + response.getStatusCode());
+                                })
+                        .body(responseType);
+            } catch (ResourceAccessException | EventListingException e) {
+                if (i < maxRetries) {
+                    logger.info("operation=getEvents, msg=Could not retrieve events. Retrying in {}ms..., status={}", backoff, e.getMessage());
+                    Thread.sleep(backoff);
+                    continue;
+                } else {
+                    logger.error("operation=getEvents, msg=Could not retrieve events after {} retries, status={}",maxRetries,e.getMessage());
+                    throw new EventListingException("Event retrieval failed after all tries. Status: " + e.getMessage());
+                }
+            }
+        }
+        throw new EventListingException("Retries exhausted");
     }
 }
