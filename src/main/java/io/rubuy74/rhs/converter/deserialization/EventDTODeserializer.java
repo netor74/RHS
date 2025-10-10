@@ -17,12 +17,10 @@ public class EventDTODeserializer {
                 "deserialize_event_dto");
         ValidatorUtils.checkAttributeList(
                 rawPayload,
-                ATTRIBUTE_LIST);
+                ATTRIBUTE_LIST,
+                "deserialize_event_dto");
         ValidatorUtils.checkArgument(
-                rawPayload.get("date") instanceof String && LocalDate
-                        .parse(rawPayload.get("date")
-                                .toString())
-                        .isAfter(LocalDate.now()),
+                rawPayload.get("date") instanceof LocalDate,
                 "Event DTO Date is invalid",
                 "deserialize_event_dto"
         );

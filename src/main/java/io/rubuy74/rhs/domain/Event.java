@@ -7,7 +7,6 @@ import io.rubuy74.rhs.utils.ValidatorUtils;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 public class Event {
     @JsonProperty
@@ -37,8 +36,6 @@ public class Event {
         ValidatorUtils.checkArgument(id == null,"Event id is null","create_event");
         ValidatorUtils.checkArgument(name == null,"Event name is null","create_event");
         ValidatorUtils.checkArgument(date == null,"Event date is null","create_event");
-        ValidatorUtils.checkArgument(Objects.equals(id, ""),   "Market id is empty","create_event");
-        ValidatorUtils.checkArgument(Objects.equals(name, ""), "Market name is empty","create_event");
         this.id = id;
         this.name = name;
         this.date = date;

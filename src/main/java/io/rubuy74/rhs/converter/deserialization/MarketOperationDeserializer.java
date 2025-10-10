@@ -24,11 +24,13 @@ public class MarketOperationDeserializer {
                 "deserialize_market_operation");
         ValidatorUtils.checkAttributeList(
                 rawPayload,
-                ATTRIBUTE_LIST
+                ATTRIBUTE_LIST,
+                "deserialize_market_operation"
         );
         ValidatorUtils.checkAttributeList(
                 rawPayload,
-                MARKET_REQUEST_ATTRIBUTE_LIST
+                MARKET_REQUEST_ATTRIBUTE_LIST,
+                "deserialize_market_request"
         );
 
 
