@@ -16,8 +16,6 @@ public class Selection {
     @JsonProperty
     private Double odd;
 
-    public Selection() {}
-
     public Selection(String id, String name, Double odd) {
         ValidatorUtils.checkArgument(id == null,    "Selection id is null","create_selection");
         ValidatorUtils.checkArgument(name == null,  "Selection name is null","create_selection");

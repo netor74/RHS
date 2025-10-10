@@ -27,8 +27,8 @@ public class MarketOperation {
 
     public MarketOperation() {}
     public MarketOperation(MarketRequest marketRequest, OperationType operationType) {
-        ValidatorUtils.checkArgument(marketRequest == null,"Market Request is null","create_market_operation");
-        ValidatorUtils.checkArgument(operationType == null,"OperationType is null","create_market_operation");
+        ValidatorUtils.checkArgument(marketRequest == null,"MarketOperation id is null","create_event");
+        ValidatorUtils.checkArgument(operationType == null,"MarketOperation name is null","create_event");
         this.marketRequest = marketRequest;
         this.operationType = operationType;
     }
