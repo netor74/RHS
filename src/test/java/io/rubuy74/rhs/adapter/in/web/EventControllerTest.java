@@ -45,14 +45,14 @@ class EventControllerTest {
     @MockitoBean
     private EventService eventService;
 
-    private static final List<Event> MOCK_EVENTS = List.of(
-            new Event("1", "Event 1", "2025-10-10"),
-            new Event("2", "Event 2", "2025-10-11")
-    );
 
     @Test
     void getEvents_ShouldReturnSuccessResponse_WhenServiceSucceeds() throws Exception {
-        when(eventService.getEvents(any(RestClient.class))).thenReturn(MOCK_EVENTS);
+        List<Event> mockEvents = List.of(
+            new Event("1", "Event 1", "2025-10-10"),
+            new Event("2", "Event 2", "2025-10-11")
+        );
+        when(eventService.getEvents(any(RestClient.class))).thenReturn(mockEvents);
         mockMvc.perform(get("/api/v1/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("SUCCESS"))
