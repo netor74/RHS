@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 import static org.mockito.Mockito.verify;
 
@@ -26,18 +25,18 @@ class IngestMarketChangeTest {
     @InjectMocks
     private IngestMarketChange ingestMarketChange;
 
-    private static final EventDTO eventDTO = new EventDTO("evt-456", "Liverpool vs Arsenal", LocalDate.parse("2025-11-15"));
-
-    private static final MarketRequest MARKET_REQUEST = new MarketRequest(
-            "market-123",
-            "Over/Under 2.5 Goals",
-            eventDTO,
-            new java.util.ArrayList<>());
-
+    private MarketRequest createMarketRequest() {
+        MarketRequest request = new MarketRequest();
+        request.marketId = "market-123";
+        request.marketName = "Over/Under 2.5 Goals";
+        request.eventDTO = new EventDTO("evt-456", "Liverpool vs Arsenal", LocalDate.parse("2025-11-15"));
+        return request;
+    }
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenAddOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.ADD);
+        MarketRequest marketRequest = createMarketRequest();
+        MarketOperation operation = new MarketOperation(marketRequest, OperationType.ADD);
 
         ingestMarketChange.handle(operation);
 
@@ -46,7 +45,8 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenEditOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.EDIT);
+        MarketRequest marketRequest = createMarketRequest();
+        MarketOperation operation = new MarketOperation(marketRequest, OperationType.EDIT);
 
         ingestMarketChange.handle(operation);
 
@@ -55,7 +55,8 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenDeleteOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.DELETE);
+        MarketRequest marketRequest = createMarketRequest();
+        MarketOperation operation = new MarketOperation(marketRequest, OperationType.DELETE);
 
         ingestMarketChange.handle(operation);
 
@@ -64,7 +65,7 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WithEmptyMarketRequest() throws JsonProcessingException {
-        MarketRequest emptyRequest = new MarketRequest("", "", null, new java.util.ArrayList<>());
+        MarketRequest emptyRequest = new MarketRequest();
         MarketOperation operation = new MarketOperation(emptyRequest, OperationType.ADD);
 
         ingestMarketChange.handle(operation);
