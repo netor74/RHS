@@ -1,8 +1,8 @@
-package io.rubuy74.rhs.dto;
+package io.rubuy74.rhs.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import io.rubuy74.rhs.domain.Event;
+
+import java.util.Map;
 
 public class EventDTO {
     @JsonProperty
@@ -15,6 +15,14 @@ public class EventDTO {
     private String date;
 
     public EventDTO() {}
+
+    public static EventDTO fromJson(Map<String,Object> rawPayload) {
+        String id = (String) rawPayload.get("id");
+        String name = (String) rawPayload.get("name");
+        String date = (String) rawPayload.get("date");
+
+        return new EventDTO(id,name,date);
+    }
 
     public EventDTO(Event event) {
         this.id = event.getId();
@@ -30,10 +38,9 @@ public class EventDTO {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this.getClass())
-                .add("id",id)
-                .add("name", name)
-                .add("date",date)
-                .toString();
+        return "EventDTO{"
+                + "id='" + id + '\''
+                + ", name='" + name + '\''
+                + ", date=" + date + '}';
     }
 }
