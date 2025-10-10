@@ -30,7 +30,7 @@ public class EventService {
             @Value("${mos.service.base-url}")  String baseUrl,
             RetryConfig retryConfig
     ) {
-        final int timeout = retryConfig.getTimeoutMs();
+        int timeout = retryConfig.getTimeoutMs();
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl + "/api/v1")
                 .clientConnector(
@@ -46,8 +46,8 @@ public class EventService {
         ParameterizedTypeReference<List<Event>> responseType =
                 new ParameterizedTypeReference<>() {};
 
-        final int maxRetries = retryConfig.getMaxRetries();
-        final int backoff = retryConfig.getBackoffTimeMs();
+        int maxRetries = retryConfig.getMaxRetries();
+        int backoff = retryConfig.getBackoffTimeMs();
 
         return webClient.get()
                 .uri("/events")
@@ -61,7 +61,7 @@ public class EventService {
                         })
                 .onStatus(HttpStatusCode::is5xxServerError,
                         (response) -> {
-                            LOGGER.error("operation=getEvents, msg=Internal Server Problem, status={}", response.statusCode());
+                            LOGGER.error("operation=getEvents, msg=Internal Server Problem, status= {}", response.statusCode());
                             throw new EventListingException(
                                     "MOS service error. Status: " + response.statusCode());
                         })

@@ -16,7 +16,8 @@ public class SelectionDeserializer {
                 "deserialize_selection");
         ValidatorUtils.checkAttributeList(
                 rawPayload,
-                ATTRIBUTE_LIST
+                ATTRIBUTE_LIST,
+                "deserialize_selection"
                 );
         String id = (String) rawPayload.get("id");
         String name = (String) rawPayload.get("name");
