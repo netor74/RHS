@@ -11,7 +11,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,8 +38,8 @@ class EventServiceTest {
     private RestClient.ResponseSpec responseSpec;
 
     private static final List<Event> EXPECTED_EVENTS = List.of(
-            new Event("1", "Mock Event 1", LocalDate.parse("2025-12-01")),
-            new Event("2", "Mock Event 2", LocalDate.parse("2025-12-02"))
+            new Event("1", "Mock Event 1", "2025-12-01"),
+            new Event("2", "Mock Event 2", "2025-12-02")
     );
 
     @Test

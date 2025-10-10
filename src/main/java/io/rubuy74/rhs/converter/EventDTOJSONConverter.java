@@ -4,7 +4,6 @@ import io.rubuy74.rhs.dto.EventDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 public class EventDTOJSONConverter {
@@ -33,7 +32,7 @@ public class EventDTOJSONConverter {
 
         String id = (String) rawPayload.get("id");
         String name = (String) rawPayload.get("name");
-        LocalDate date = LocalDate.parse((String) rawPayload.get("date"));
+        String date = (String) rawPayload.get("date");
 
         return new EventDTO(id,name,date);
     }

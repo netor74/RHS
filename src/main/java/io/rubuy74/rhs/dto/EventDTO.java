@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.rubuy74.rhs.domain.Event;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 public class EventDTO {
     @JsonProperty
     private String id;
@@ -15,7 +12,7 @@ public class EventDTO {
     private String name;
 
     @JsonProperty
-    private LocalDate date;
+    private String date;
 
     public EventDTO() {}
 
@@ -32,17 +29,21 @@ public class EventDTO {
         this.name = name;
     }
     
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
     
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public EventDTO(Event event) {
         this.id = event.getId();
         this.name = event.getName();
         this.date = event.getDate();
     }
 
-    public EventDTO(String id, String name, LocalDate date) {
+    public EventDTO(String id, String name, String date) {
         this.id = id;
         this.name = name;
         this.date = date;
