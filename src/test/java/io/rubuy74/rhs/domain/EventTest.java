@@ -1,15 +1,10 @@
 package io.rubuy74.rhs.domain;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EventTest {
@@ -22,26 +17,25 @@ class EventTest {
         LocalDate date = EVENT_DATE;
         Event event = new Event(EVENT_ID, EVENT_NAME, date);
 
-        assertAll(
-            () -> assertThat(event.getId()).isEqualTo(EVENT_ID),
-            () -> assertThat(event.getName()).isEqualTo(EVENT_NAME),
-            () -> assertThat(event.getDate()).isEqualTo(date),
-            () -> assertThat(event.toString()).contains("id=" + EVENT_ID).contains(EVENT_NAME)
-        );
+        assertThat(event.getId()).isEqualTo(EVENT_ID);
+        assertThat(event.getName()).isEqualTo(EVENT_NAME);
+        assertThat(event.getDate()).isEqualTo(date);
+        assertThat(event.toString()).contains("id=" + EVENT_ID).contains(EVENT_NAME);
     }
 
-    static Stream<Arguments> invalidConstructorArgs() {
-        return Stream.of(
-            Arguments.of(null, EVENT_NAME, EVENT_DATE),
-            Arguments.of(EVENT_ID, null, EVENT_DATE),
-            Arguments.of(EVENT_ID, EVENT_NAME, null)
-        );
+    @Test
+    void constructor_ShouldThrow_WhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Event(null, EVENT_NAME, EVENT_DATE));
     }
 
-    @ParameterizedTest
-    @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, LocalDate date) {
-        assertThrows(IllegalArgumentException.class, () -> new Event(id, name, date));
+    @Test
+    void constructor_ShouldThrow_WhenNameIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Event(EVENT_ID, null, EVENT_DATE));
+    }
+
+    @Test
+    void constructor_ShouldThrow_WhenDateIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Event(EVENT_ID, EVENT_NAME, null));
     }
 }
 

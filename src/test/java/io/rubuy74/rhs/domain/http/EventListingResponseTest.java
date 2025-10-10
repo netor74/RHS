@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class EventListingResponseTest {
     private static final String EVENT_ID = "1";
@@ -19,11 +18,9 @@ class EventListingResponseTest {
     void record_ShouldExposeFields() {
         Event evt = new Event(EVENT_ID, EVENT_NAME, EVENT_DATE);
         EventListingResponse res = new EventListingResponse(Status.SUCCESS, MESSAGE, List.of(evt));
-        assertAll(
-            () -> assertThat(res.status()).isEqualTo(Status.SUCCESS),
-            () -> assertThat(res.message()).isEqualTo(MESSAGE),
-            () -> assertThat(res.events()).containsExactly(evt)
-        );
+        assertThat(res.status()).isEqualTo(Status.SUCCESS);
+        assertThat(res.message()).isEqualTo(MESSAGE);
+        assertThat(res.events()).containsExactly(evt);
     }
 }
 

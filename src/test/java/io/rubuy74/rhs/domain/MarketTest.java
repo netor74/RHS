@@ -1,15 +1,10 @@
 package io.rubuy74.rhs.domain;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MarketTest {
@@ -23,25 +18,23 @@ class MarketTest {
     void constructor_ShouldSetFields_WhenValidArgsProvided() {
         List<Selection> selectionList = List.of(new Selection(SELECTION_ID, SELECTION_NAME, SELECTION_ODD));
         Market market = new Market(MARKET_ID, MARKET_NAME, selectionList);
-
-        assertAll(
-            () -> assertThat(market).isNotNull(),
-            () -> assertThat(market.toString()).contains("Market")
-        );
+        assertThat(market).isNotNull();
+        assertThat(market.toString()).contains("Market");
     }
 
-    static Stream<Arguments> invalidConstructorArgs() {
-        return Stream.of(
-            Arguments.of(null, MARKET_NAME, List.of()),
-            Arguments.of(MARKET_ID, null, List.of()),
-            Arguments.of(MARKET_ID, MARKET_NAME, null)
-        );
+    @Test
+    void constructor_ShouldThrow_WhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Market(null, MARKET_NAME, List.of()));
     }
 
-    @ParameterizedTest
-    @MethodSource("invalidConstructorArgs")
-    void constructor_ShouldThrow_WhenAnyArgumentIsNull(String id, String name, List<Selection> selections) {
-        assertThrows(IllegalArgumentException.class, () -> new Market(id, name, selections));
+    @Test
+    void constructor_ShouldThrow_WhenNameIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Market(MARKET_ID, null, List.of()));
+    }
+
+    @Test
+    void constructor_ShouldThrow_WhenSelectionsIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Market(MARKET_ID, MARKET_NAME, null));
     }
 }
 

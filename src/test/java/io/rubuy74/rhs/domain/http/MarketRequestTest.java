@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MarketRequestTest {
     private static final String MARKET_ID = "m1";
@@ -20,14 +19,12 @@ class MarketRequestTest {
     @Test
     void constructor_ShouldSetFieldsAndTimestamp() {
         EventDTO eventDTO = new EventDTO(EVENT_ID, EVENT_NAME, EVENT_DATE);
-        MarketRequest req = new MarketRequest(MARKET_ID, MARKET_NAME, eventDTO, new ArrayList<>());
-        assertAll(
-            () -> assertThat(req.marketId).isEqualTo(MARKET_ID),
-            () -> assertThat(req.marketName).isEqualTo(MARKET_NAME),
-            () -> assertThat(req.eventDTO).isSameAs(eventDTO),
-            () -> assertThat(req.timestamp).isNotNull(),
-            () -> assertThat(req.selections).isNotNull()
-        );
+        MarketRequest req = new MarketRequest(MARKET_ID, MARKET_NAME, eventDTO, new ArrayList<Selection>());
+        assertThat(req.marketId).isEqualTo(MARKET_ID);
+        assertThat(req.marketName).isEqualTo(MARKET_NAME);
+        assertThat(req.eventDTO).isSameAs(eventDTO);
+        assertThat(req.timestamp).isNotNull();
+        assertThat(req.selections).isNotNull();
     }
 }
 
