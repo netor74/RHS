@@ -9,11 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MarketOperationDeserializer {
+public class MarketOperationJSONConverter {
     private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "event", "selection");
 
     @SuppressWarnings("unchecked")
-    public static MarketOperation deserialize(LinkedHashMap<String, Object> rawPayload) {
+    public static MarketOperation fromJson(LinkedHashMap<String, Object> rawPayload) {
         MarketOperation marketOperation = new MarketOperation();
         MarketRequest marketRequest = new MarketRequest();
 
@@ -31,14 +31,14 @@ public class MarketOperationDeserializer {
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
 
         // add event to marketRequest
-        marketRequest.eventDTO = EventDTODeserializer.deserialize(eventMap);
+        marketRequest.eventDTO = EventDTOJSONConverter.fromJson(eventMap);
         marketRequest.marketId = (String)marketRequestMap.get("marketId");
         marketRequest.marketName = (String)marketRequestMap.get("marketName");
 
         List<Map<String, Object>> selectionsMap = (List<Map<String, Object>>) marketRequestMap.get("selections");
 
         // add selections to marketRequest
-        marketRequest.selections = selectionsMap.stream().map(SelectionDeserializer::deserialize).toList();
+        marketRequest.selections = selectionsMap.stream().map(SelectionJSONConverter::fromJson).toList();
         marketOperation.setMarketRequest(marketRequest);
         marketOperation.setOperationType(OperationType.valueOf((String) marketRequestMap.get("operationType")));
         return marketOperation;

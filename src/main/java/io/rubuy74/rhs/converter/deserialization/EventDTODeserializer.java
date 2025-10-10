@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public class EventDTODeserializer {
+public class EventDTOJSONConverter {
     private static final List<String> ATTRIBUTE_LIST = List.of("event", "name", "date");
 
-    public static EventDTO deserialize(Map<String,Object> rawPayload) {
+    public static EventDTO fromJson(Map<String,Object> rawPayload) {
         ValidatorUtils.checkArgument(
                 rawPayload != null,
                 "EventDTO payload is null",
@@ -19,11 +19,6 @@ public class EventDTODeserializer {
                 rawPayload,
                 ATTRIBUTE_LIST,
                 "deserialize_event_dto");
-        ValidatorUtils.checkArgument(
-                rawPayload.get("date") instanceof LocalDate,
-                "Event DTO Date is invalid",
-                "deserialize_event_dto"
-        );
 
         String id = (String) rawPayload.get("id");
         String name = (String) rawPayload.get("name");
