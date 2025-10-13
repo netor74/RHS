@@ -1,24 +1,26 @@
 package io.rubuy74.rhs.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.rubuy74.rhs.utils.ValidatorUtils;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Objects;
 
 public class Event {
-    @JsonProperty
-    private final String id;
+
+    private static final ZoneId zoneId = ZoneOffset.UTC;
 
     @JsonProperty
-    private final String name;
+    private String id;
 
     @JsonProperty
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private final LocalDate date;
+    private String name;
+
+    @JsonProperty
+    private long date;
 
     @JsonProperty
     private final List<Market> markets = new java.util.ArrayList<>();
@@ -29,7 +31,7 @@ public class Event {
     public String getName() {
         return name;
     }
-    public LocalDate getDate() {
+    public long getDate() {
         return date;
     }
 
@@ -41,8 +43,21 @@ public class Event {
         ValidatorUtils.checkArgument(name.isBlank(), "Event name is empty","create_event");
         this.id = id;
         this.name = name;
-        this.date = date;
+        this.date = date.atStartOfDay(zoneId).toInstant().toEpochMilli();
     }
+
+    public Event(String id, String name, long epochMilliseconds) {
+        ValidatorUtils.checkArgument(id == null,"Event id is null","create_event");
+        ValidatorUtils.checkArgument(name == null,"Event name is null","create_event");
+        ValidatorUtils.checkArgument(epochMilliseconds <= 0,"Event date is null","create_event");
+        ValidatorUtils.checkArgument(id.isBlank(),   "Event id is empty","create_event");
+        ValidatorUtils.checkArgument(name.isBlank(), "Event name is empty","create_event");
+        this.id = id;
+        this.name = name;
+        this.date = epochMilliseconds;
+    }
+
+    public Event() {}
 
     @Override
     public String toString() {

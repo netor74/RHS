@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,12 +37,17 @@ class MarketControllerTest {
     @MockitoBean
     private MarketChangeUseCase marketChangeUseCase;
 
-    private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", LocalDate.parse("2025-10-28"));
+    private static final ZoneId zoneId = ZoneOffset.UTC;
+    private static final EventDTO eventDTO = new EventDTO("evt-01", "Team A vs Team B", LocalDate
+            .parse("2025-10-28")
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli());
     private static final String MOCK_MARKET_REQUEST_ID = "12345";
     private static final String MOCK_MARKET_REQUEST_NAME = "Match Winner";
     private static final String MOCK_EVENT_ID = "evt-01";
     private static final String MOCK_EVENT_NAME = "Team A vs Team B";
-    private static final String MOCK_EVENT_DATE = "2025-10-28";
+    private static final long MOCK_EVENT_DATE = LocalDate.parse("2025-10-28").atStartOfDay(zoneId).toInstant().toEpochMilli();
     private static final MarketRequest MARKET_REQUEST = new MarketRequest(
             MOCK_MARKET_REQUEST_ID,
             MOCK_MARKET_REQUEST_NAME,
@@ -105,7 +112,7 @@ class MarketControllerTest {
                 () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE),
                 () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
                 () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID),
-                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getDate()).isEqualTo(MOCK_EVENT_DATE)
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getEpochMilliseconds()).isEqualTo(MOCK_EVENT_DATE)
         );
     }
 }

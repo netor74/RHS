@@ -20,7 +20,7 @@ public class EventController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<EventListingResponse>> getEvents() throws InterruptedException {
+    public Mono<ResponseEntity<EventListingResponse>> getEvents() {
         return eventService.getEvents()
                 .map(events -> ResponseEntity.ok(new EventListingResponse(Status.SUCCESS,"",events)))
                 // Handle specific domain exception first
@@ -43,7 +43,7 @@ public class EventController {
                                 .body(
                                         new EventListingResponse(
                                                 Status.ERROR,
-                                                "Unknown Internal Server Error",
+                                                "Unknown Internal Server Error: " + e.getMessage(),
                                                 List.of()
                                         )
                                 )

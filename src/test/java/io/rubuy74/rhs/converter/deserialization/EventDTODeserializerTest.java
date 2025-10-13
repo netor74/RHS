@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EventDTODeserializerTest {
+    private static final ZoneId zoneId = ZoneOffset.UTC;
 
     @Test
     void deserialize_ShouldReturnEventDTO_WhenValidPayload() {
@@ -29,7 +32,12 @@ class EventDTODeserializerTest {
         assertAll(
                 () -> assertThat(eventDTO.getId()).isEqualTo("123"),
                 () -> assertThat(eventDTO.getName()).isEqualTo("Test Event"),
-                () -> assertThat(eventDTO.getDate()).isEqualTo(LocalDate.of(2026, 1, 1))
+                () -> assertThat(eventDTO.getEpochMilliseconds()).isEqualTo(
+                        LocalDate.of(2026, 1, 1)
+                                .atStartOfDay(zoneId)
+                                .toInstant()
+                                .toEpochMilli()
+                )
         );
     }
 

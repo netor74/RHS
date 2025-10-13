@@ -1,12 +1,17 @@
 package io.rubuy74.rhs.converter.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.rubuy74.rhs.domain.MarketOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InvalidObjectException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MarketOperationSerializer {
 
@@ -15,7 +20,6 @@ public class MarketOperationSerializer {
 
     public MarketOperationSerializer() {
         this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
     }
 
     public byte[] serialize(MarketOperation marketOperation) throws InvalidObjectException {
