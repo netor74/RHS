@@ -4,6 +4,8 @@ import io.rubuy74.rhs.domain.Event;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class EventListingResponseTest {
     private static final String EVENT_ID = "1";
     private static final String EVENT_NAME = "N";
-    private static final LocalDate EVENT_DATE = LocalDate.parse("2025-12-01");
+    private static final ZoneId zoneId = ZoneOffset.UTC;
+    private static final long EVENT_DATE = LocalDate
+            .parse("2025-12-01")
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli();
     private static final String MESSAGE = "";
 
     @Test

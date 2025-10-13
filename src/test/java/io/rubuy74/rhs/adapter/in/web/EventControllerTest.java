@@ -9,6 +9,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -26,9 +28,20 @@ class EventControllerTest {
     @MockitoBean
     private EventService eventService;
 
+    private static final ZoneId zoneId = ZoneOffset.UTC;
     private static final List<Event> MOCK_EVENTS = List.of(
-            new Event("1", "Event 1", LocalDate.parse("2025-10-10")),
-            new Event("2", "Event 2", LocalDate.parse("2025-10-11"))
+            new Event("1", "Event 1", LocalDate
+                    .parse("2025-10-10")
+                    .atStartOfDay(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+            ),
+            new Event("2", "Event 2", LocalDate
+                    .parse("2025-10-11")
+                    .atStartOfDay(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+            )
     );
 
     @Test
@@ -74,7 +87,7 @@ class EventControllerTest {
         mockMvc.perform(asyncDispatch(mvcResult))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value("ERROR"))
-                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error: Unknown Internal Server Error"))
                 .andExpect(jsonPath("$.events").isArray())
                 .andExpect(jsonPath("$.events").isEmpty());
     }
@@ -89,7 +102,7 @@ class EventControllerTest {
         mockMvc.perform(asyncDispatch(mvcResult))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value("ERROR"))
-                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("Unknown Internal Server Error: null"))
                 .andExpect(jsonPath("$.events").isArray())
                 .andExpect(jsonPath("$.events").isEmpty());
     }

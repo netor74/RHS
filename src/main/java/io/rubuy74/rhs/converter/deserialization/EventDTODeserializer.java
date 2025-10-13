@@ -4,17 +4,22 @@ import io.rubuy74.rhs.dto.EventDTO;
 import io.rubuy74.rhs.utils.ValidatorUtils;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
 public class EventDTODeserializer {
     private static final List<String> ATTRIBUTE_LIST = List.of("name", "date");
 
-    private static boolean checkDateFormat(String date) {
-        if(!date.matches("\\d{4}([/\\-])\\d{2}([/\\-])\\d{2}")) {
+    private static boolean checkDate(String date) {
+        try  {
+            LocalDate localDate = LocalDate.parse(date);
+            return !localDate.isBefore(LocalDate.now());
+        } catch (DateTimeParseException e) {
             return false;
         }
-        return LocalDate.parse(date).isAfter(LocalDate.now());
     }
 
     private static void checkEventValidity(Map<String,Object> rawPayload) {
@@ -28,7 +33,7 @@ public class EventDTODeserializer {
         ValidatorUtils.checkArgument(
                 !(
                         rawPayload.get("date") instanceof String &&
-                        checkDateFormat((String) rawPayload.get("date"))
+                        checkDate((String) rawPayload.get("date"))
                 ),
                 "Event DTO Date is invalid",
                 "deserialize_event_dto"
@@ -40,8 +45,13 @@ public class EventDTODeserializer {
 
         String id = (String) rawPayload.get("id");
         String name = (String) rawPayload.get("name");
-        LocalDate date = LocalDate.parse((String) rawPayload.get("date"));
-
-        return new EventDTO(id,name,date);
+        ZoneId zoneId = ZoneOffset.UTC;
+        long epochMilliseconds = LocalDate
+                .parse((String) rawPayload.get("date"))
+                .atStartOfDay(zoneId)
+                .toInstant()
+                .toEpochMilli();
+        System.out.println("epoch milliseconds: " + epochMilliseconds);
+        return new EventDTO(id,name,epochMilliseconds);
     }
 }

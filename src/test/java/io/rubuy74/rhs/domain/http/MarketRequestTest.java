@@ -5,6 +5,8 @@ import io.rubuy74.rhs.domain.Selection;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +17,12 @@ class MarketRequestTest {
     private static final String MARKET_NAME = "Market 1";
     private static final String EVENT_ID = "e1";
     private static final String EVENT_NAME = "Match";
-    private static final LocalDate EVENT_DATE = LocalDate.parse("2025-12-01");
+    private static final ZoneId zoneId = ZoneOffset.UTC;
+    private static final long EVENT_DATE = LocalDate
+            .parse("2025-12-01")
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli();
 
     @Test
     void constructor_ShouldSetFieldsAndTimestamp() {

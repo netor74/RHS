@@ -3,6 +3,7 @@ package io.rubuy74.rhs.adapter.in.web;
 import io.rubuy74.rhs.config.property.RetryConfig;
 import io.rubuy74.rhs.domain.Event;
 import io.rubuy74.rhs.exception.EventListingException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -11,6 +12,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,9 +50,20 @@ class EventServiceTest {
     private static final String SECOND_MOCK_EVENT_ID = "2";
     private static final String FIRST_MOCK_EVENT_NAME = "Event 1";
     private static final String SECOND_MOCK_EVENT_NAME = "Event 2";
+    private static final ZoneId zoneId = ZoneOffset.UTC;
     private static final List<Event> EXPECTED_EVENTS = List.of(
-            new Event(FIRST_MOCK_EVENT_ID, FIRST_MOCK_EVENT_NAME, LocalDate.parse("2025-12-01")),
-            new Event(SECOND_MOCK_EVENT_ID, SECOND_MOCK_EVENT_NAME, LocalDate.parse("2025-12-02"))
+            new Event(FIRST_MOCK_EVENT_ID, FIRST_MOCK_EVENT_NAME, LocalDate
+                    .parse("2025-12-01")
+                    .atStartOfDay(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+            ),
+            new Event(SECOND_MOCK_EVENT_ID, SECOND_MOCK_EVENT_NAME, LocalDate
+                    .parse("2025-12-02")
+                    .atStartOfDay(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+            )
     );
 
     private EventService createEventService() {
@@ -77,10 +91,22 @@ class EventServiceTest {
         StepVerifier.create(eventService.getEvents())
                 .assertNext(actualEvents -> assertAll(
                         () -> assertThat(actualEvents).hasSize(2),
-                        () -> assertThat(actualEvents.get(0).getId()).isEqualTo(FIRST_MOCK_EVENT_ID),
-                        () -> assertThat(actualEvents.get(0).getName()).isEqualTo(FIRST_MOCK_EVENT_NAME),
-                        () -> assertThat(actualEvents.get(1).getId()).isEqualTo(SECOND_MOCK_EVENT_ID),
-                        () -> assertThat(actualEvents.get(1).getName()).isEqualTo(SECOND_MOCK_EVENT_NAME)
+                        () -> {
+                            Assertions.assertNotNull(actualEvents);
+                            assertThat(actualEvents.getFirst().getId()).isEqualTo(FIRST_MOCK_EVENT_ID);
+                        },
+                        () -> {
+                            Assertions.assertNotNull(actualEvents);
+                            assertThat(actualEvents.getFirst().getName()).isEqualTo(FIRST_MOCK_EVENT_NAME);
+                        },
+                        () -> {
+                            Assertions.assertNotNull(actualEvents);
+                            assertThat(actualEvents.get(1).getId()).isEqualTo(SECOND_MOCK_EVENT_ID);
+                        },
+                        () -> {
+                            Assertions.assertNotNull(actualEvents);
+                            assertThat(actualEvents.get(1).getName()).isEqualTo(SECOND_MOCK_EVENT_NAME);
+                        }
                 ))
                 .verifyComplete();
     }

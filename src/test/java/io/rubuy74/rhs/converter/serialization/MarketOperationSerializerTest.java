@@ -14,6 +14,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.InvalidObjectException;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,7 +30,13 @@ class MarketOperationSerializerTest {
 
     @Test
     void serialize_ShouldReturnBytes_WhenValidObjectProvided() throws Exception {
-        EventDTO eventDTO = new EventDTO("e1", "Game A vs Game B", LocalDate.parse("2026-11-20"));
+        ZoneId zoneId = ZoneOffset.UTC;
+        EventDTO eventDTO = new EventDTO("e1", "Game A vs Game B", LocalDate
+                .parse("2026-11-20")
+                .atStartOfDay(zoneId)
+                .toInstant()
+                .toEpochMilli()
+        );
         List<Selection> selections = List.of(
                 new Selection("s1", "Team A", 1.8),
                 new Selection("s2", "Team B", 2.0)

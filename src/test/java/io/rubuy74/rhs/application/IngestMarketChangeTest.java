@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.verify;
@@ -26,7 +28,13 @@ class IngestMarketChangeTest {
     @InjectMocks
     private IngestMarketChange ingestMarketChange;
 
-    private static final EventDTO eventDTO = new EventDTO("evt-456", "Liverpool vs Arsenal", LocalDate.parse("2025-11-15"));
+    private static ZoneId zoneId = ZoneOffset.UTC;
+    private static final EventDTO eventDTO = new EventDTO("evt-456", "Liverpool vs Arsenal", LocalDate
+            .parse("2025-11-15")
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli()
+    );
 
     private static final MarketRequest MARKET_REQUEST = new MarketRequest(
             "market-123",
