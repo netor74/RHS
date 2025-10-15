@@ -21,6 +21,7 @@ public class EventDTO {
     private String name;
 
     @JsonProperty("date")
+    @JsonDeserialize(using = LocalDateToEpochDeserializer.class)
     private long epochMilliseconds;
 
     public EventDTO() {}
