@@ -9,15 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class MarketOperationDeserializer {
     private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "operationType");
     private static final List<String> MARKET_REQUEST_ATTRIBUTE_LIST = List.of("event", "selections");
 
     @SuppressWarnings("unchecked")
     public static MarketOperation deserialize(LinkedHashMap<String, Object> rawPayload) {
-        MarketOperation marketOperation = new MarketOperation();
-        MarketRequest marketRequest = new MarketRequest();
-
         ValidatorUtils.checkArgument(
                 rawPayload == null,
                 "MarketOperation payload is null",
@@ -34,18 +32,16 @@ public class MarketOperationDeserializer {
 
 
         Map<String, Object> eventMap = (Map<String, Object>) marketRequestMap.get("event");
-
-        // add event to marketRequest
-        marketRequest.eventDTO = EventDTODeserializer.deserialize(eventMap);
-        marketRequest.marketId = (String)marketRequestMap.get("marketId");
-        marketRequest.marketName = (String)marketRequestMap.get("marketName");
-
         List<Map<String, Object>> selectionsMap = (List<Map<String, Object>>) marketRequestMap.get("selections");
 
-        // add selections to marketRequest
-        marketRequest.selections = selectionsMap.stream().map(SelectionDeserializer::deserialize).toList();
-        marketOperation.setMarketRequest(marketRequest);
-        marketOperation.setOperationType(OperationType.valueOf((String) rawPayload.get("operationType")));
-        return marketOperation;
+        MarketRequest marketRequest = new MarketRequest((String) marketRequestMap.get("marketId"),
+                (String) marketRequestMap.get("marketName"),
+                EventDTODeserializer.deserialize(eventMap),
+                selectionsMap.stream().map(SelectionDeserializer::deserialize).toList()
+        );
+
+        return new MarketOperation(marketRequest,
+                OperationType.valueOf((String) rawPayload.get("operationType"))
+        );
     }
 }
