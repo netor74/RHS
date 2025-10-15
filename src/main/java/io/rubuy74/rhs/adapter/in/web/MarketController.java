@@ -5,6 +5,9 @@ import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.port.in.MarketChangeUseCase;
+import org.apache.kafka.shaded.io.opentelemetry.proto.trace.v1.Status;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,29 +20,32 @@ public class MarketController {
     }
 
     @PostMapping
-    public void addMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Object> addMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.ADD
                 );
         marketChangeUseCase.handle(marketOperation);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @PutMapping
-    public void editMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Object> editMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.EDIT
         );
         marketChangeUseCase.handle(marketOperation);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @DeleteMapping
-    public void deleteMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Object> deleteMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
         MarketOperation marketOperation = new MarketOperation(
                 marketRequest,
                 OperationType.DELETE
         );
         marketChangeUseCase.handle(marketOperation);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
