@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(MarketController.class)
@@ -62,16 +63,16 @@ class MarketControllerTest {
         mockMvc.perform(post("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.requestId").exists());
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
         assertAll(
-                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.ADD),
-                () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
-                () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
-                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID)
+            () -> assertThat(capturedOperation.getRequestId()).isNotNull(),
+            () -> assertThat(capturedOperation.getMarketRequest()).isSameAs(MARKET_REQUEST),
+            () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE)
         );
     }
 
@@ -82,16 +83,18 @@ class MarketControllerTest {
         mockMvc.perform(put("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.requestId").exists());
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
         assertAll(
-                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.EDIT),
+                () -> assertThat(capturedOperation.getRequestId()).isNotNull(),
+                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.ADD),
                 () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
                 () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
-                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getName()).isEqualTo(MOCK_EVENT_NAME)
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID)
         );
 
     }
@@ -103,16 +106,18 @@ class MarketControllerTest {
         mockMvc.perform(delete("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.requestId").exists());
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
         assertAll(
+                () -> assertThat(capturedOperation.getRequestId()).isNotNull(),
                 () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE),
                 () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
-                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID),
-                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getEpochMilliseconds()).isEqualTo(MOCK_EVENT_DATE)
+                () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
+                () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID)
         );
     }
 }

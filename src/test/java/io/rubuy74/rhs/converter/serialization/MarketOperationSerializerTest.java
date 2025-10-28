@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MarketOperationSerializerTest {
 
     private final MarketOperationSerializer serializer = new MarketOperationSerializer();
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     void serialize_ShouldReturnBytes_WhenValidObjectProvided() throws Exception {
@@ -42,7 +42,7 @@ class MarketOperationSerializerTest {
                 new Selection("s2", "Team B", 2.0)
         );
         MarketRequest marketRequest = new MarketRequest("m1", "Match Result", eventDTO, selections);
-        MarketOperation marketOperation = new MarketOperation(marketRequest, OperationType.ADD);
+        MarketOperation marketOperation = new MarketOperation("test-request-id", marketRequest, OperationType.ADD);
 
         byte[] serializedBytes = serializer.serialize(marketOperation);
         MarketOperation deserializedObject = mapper.readValue(serializedBytes, MarketOperation.class);

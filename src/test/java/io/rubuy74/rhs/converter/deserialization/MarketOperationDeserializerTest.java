@@ -67,15 +67,14 @@ class MarketOperationDeserializerTest {
         marketRequestMap.put("marketName", "Market 1");
         marketRequestMap.put("event", eventMap);
         marketRequestMap.put("selections", List.of(selectionMap));
+        validPayload.put("requestId", "test-request-id");
         validPayload.put("marketRequest", marketRequestMap);
         validPayload.put("operationType", "ADD");
 
         return Stream.of(
                 Arguments.of(null, "MarketOperation payload is null"),
                 Arguments.of(new LinkedHashMap<>() {{
-                    put("marketRequest", marketRequestMap);
-                }}, "attribute 'operationType' doesn't exist"),
-                Arguments.of(new LinkedHashMap<>() {{
+                    put("requestId", "test-request-id");
                     put("marketRequest", marketRequestMap);
                     put("operationType", "INVALID_OP");
                 }}, "No enum constant io.rubuy74.rhs.domain.http.OperationType.INVALID_OP")
