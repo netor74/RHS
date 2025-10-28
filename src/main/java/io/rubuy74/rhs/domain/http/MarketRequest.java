@@ -19,9 +19,6 @@ public class MarketRequest {
     public EventDTO eventDTO;
 
     @JsonProperty
-    Timestamp timestamp;
-
-    @JsonProperty
     public List<Selection> selections;
 
     public MarketRequest() {}
@@ -29,7 +26,6 @@ public class MarketRequest {
         this.marketId = marketId;
         this.marketName = marketName;
         this.eventDTO = eventDTO;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
         this.selections = selections;
     }
     @Override

@@ -45,7 +45,7 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenAddOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.ADD);
+        MarketOperation operation = new MarketOperation("test-request-id", MARKET_REQUEST, OperationType.ADD);
 
         ingestMarketChange.handle(operation);
 
@@ -54,7 +54,7 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenEditOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.EDIT);
+        MarketOperation operation = new MarketOperation("test-request-id", MARKET_REQUEST, OperationType.EDIT);
 
         ingestMarketChange.handle(operation);
 
@@ -63,7 +63,7 @@ class IngestMarketChangeTest {
 
     @Test
     void handle_ShouldDelegateToPublisher_WhenDeleteOperation() throws JsonProcessingException {
-        MarketOperation operation = new MarketOperation(MARKET_REQUEST, OperationType.DELETE);
+        MarketOperation operation = new MarketOperation("test-request-id", MARKET_REQUEST, OperationType.DELETE);
 
         ingestMarketChange.handle(operation);
 
@@ -73,7 +73,7 @@ class IngestMarketChangeTest {
     @Test
     void handle_ShouldDelegateToPublisher_WithEmptyMarketRequest() throws JsonProcessingException {
         MarketRequest emptyRequest = new MarketRequest("", "", null, new java.util.ArrayList<>());
-        MarketOperation operation = new MarketOperation(emptyRequest, OperationType.ADD);
+        MarketOperation operation = new MarketOperation("test-request-id", emptyRequest, OperationType.ADD);
 
         ingestMarketChange.handle(operation);
 

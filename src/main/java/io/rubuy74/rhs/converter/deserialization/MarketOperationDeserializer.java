@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MarketOperationDeserializer {
-    private static final List<String> ATTRIBUTE_LIST = List.of("marketRequest", "operationType");
+    private static final List<String> ATTRIBUTE_LIST = List.of("requestId", "marketRequest", "operationType");
     private static final List<String> MARKET_REQUEST_ATTRIBUTE_LIST = List.of("event", "selections");
 
     @SuppressWarnings("unchecked")
@@ -44,6 +44,7 @@ public class MarketOperationDeserializer {
 
         // add selections to marketRequest
         marketRequest.selections = selectionsMap.stream().map(SelectionDeserializer::deserialize).toList();
+        marketOperation.setRequestId((String) rawPayload.get("requestId"));
         marketOperation.setMarketRequest(marketRequest);
         marketOperation.setOperationType(OperationType.valueOf((String) rawPayload.get("operationType")));
         return marketOperation;

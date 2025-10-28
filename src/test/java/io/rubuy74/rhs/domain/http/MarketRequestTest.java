@@ -32,7 +32,6 @@ class MarketRequestTest {
             () -> assertThat(req.marketId).isEqualTo(MARKET_ID),
             () -> assertThat(req.marketName).isEqualTo(MARKET_NAME),
             () -> assertThat(req.eventDTO).isSameAs(eventDTO),
-            () -> assertThat(req.timestamp).isNotNull(),
             () -> assertThat(req.selections).isNotNull()
         );
     }

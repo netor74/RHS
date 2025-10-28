@@ -5,10 +5,12 @@ import io.rubuy74.rhs.domain.MarketOperation;
 import io.rubuy74.rhs.domain.http.MarketRequest;
 import io.rubuy74.rhs.domain.http.OperationType;
 import io.rubuy74.rhs.port.in.MarketChangeUseCase;
-import org.apache.kafka.shaded.io.opentelemetry.proto.trace.v1.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/market-change")
@@ -20,32 +22,38 @@ public class MarketController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Void> addMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+        String requestId = UUID.randomUUID().toString();
         MarketOperation marketOperation = new MarketOperation(
+                requestId,
                 marketRequest,
                 OperationType.ADD
                 );
         marketChangeUseCase.handle(marketOperation);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.accepted().header("Location", "/api/v1/market-change/status/" + requestId).build();
     }
 
     @PutMapping
-    public ResponseEntity<Object> editMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Void> editMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+        String requestId = UUID.randomUUID().toString();
         MarketOperation marketOperation = new MarketOperation(
+                requestId,
                 marketRequest,
                 OperationType.EDIT
         );
         marketChangeUseCase.handle(marketOperation);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.accepted().header("Location", "/api/v1/market-change/status/" + requestId).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+    public ResponseEntity<Void> deleteMarkets(@RequestBody MarketRequest marketRequest) throws JsonProcessingException {
+        String requestId = UUID.randomUUID().toString();
         MarketOperation marketOperation = new MarketOperation(
+                requestId,
                 marketRequest,
                 OperationType.DELETE
         );
         marketChangeUseCase.handle(marketOperation);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.accepted().header("Location", "/api/v1/market-change/status/" + requestId).build();
     }
 }
