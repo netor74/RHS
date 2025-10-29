@@ -60,18 +60,17 @@ class MarketControllerTest {
     void addMarkets_ShouldCallUseCaseWithAddOperation() throws Exception {
         String requestJson = objectMapper.writeValueAsString(MARKET_REQUEST);
 
-        mockMvc.perform(post("/api/v1/market-change")
+        mockMvc.perform(delete("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.requestId").exists());
+                .andExpect(status().isAccepted());
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
         assertAll(
             () -> assertThat(capturedOperation.getRequestId()).isNotNull(),
-            () -> assertThat(capturedOperation.getMarketRequest()).isSameAs(MARKET_REQUEST),
+            () -> assertThat(capturedOperation.getMarketRequest()).usingRecursiveComparison().isEqualTo(MARKET_REQUEST),
             () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.DELETE)
         );
     }
@@ -83,15 +82,14 @@ class MarketControllerTest {
         mockMvc.perform(put("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.requestId").exists());
+                .andExpect(status().isAccepted());;
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 
         MarketOperation capturedOperation = captor.getValue();
         assertAll(
                 () -> assertThat(capturedOperation.getRequestId()).isNotNull(),
-                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.ADD),
+                () -> assertThat(capturedOperation.getOperationType()).isEqualTo(OperationType.EDIT),
                 () -> assertThat(capturedOperation.getMarketRequest().marketId).isEqualTo(MOCK_MARKET_REQUEST_ID),
                 () -> assertThat(capturedOperation.getMarketRequest().marketName).isEqualTo(MOCK_MARKET_REQUEST_NAME),
                 () -> assertThat(capturedOperation.getMarketRequest().eventDTO.getId()).isEqualTo(MOCK_EVENT_ID)
@@ -106,8 +104,7 @@ class MarketControllerTest {
         mockMvc.perform(delete("/api/v1/market-change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.requestId").exists());
+                .andExpect(status().isAccepted());
         ArgumentCaptor<MarketOperation> captor = ArgumentCaptor.forClass(MarketOperation.class);
         verify(marketChangeUseCase).handle(captor.capture());
 

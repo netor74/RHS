@@ -41,6 +41,8 @@ class MarketOperationDeserializerTest {
         rawPayload.put("marketRequest", marketRequestMap);
         rawPayload.put("operationType", "ADD");
 
+        rawPayload.put("requestId", "1231231231231");
+
         MarketOperation result = MarketOperationDeserializer.deserialize(rawPayload);
 
         assertAll(
