@@ -26,6 +26,10 @@ public class MarketStatusController {
         if (result == null) {
             return ResponseEntity.ok(Map.of("status", "PENDING", "message", "Request is still processing"));
         }
+        String resultTypeString = result.resultType();
+        if (resultTypeString.equals("FAILURE") || resultTypeString.equals("TIMEOUT") ) {
+            return ResponseEntity.ok(Map.of("status", result.resultType(), "message", result.message()));
+        }
         return ResponseEntity.ok(Map.of("status", result.resultType(), "message", result.message(), "marketRequest", result.marketOperation().getMarketRequest()));
     }
 }
